@@ -10,18 +10,21 @@
     "lint": "tslint 'src/**/*.ts'",
     "watch": "tsc -w",
     "build": "npm run clean && tsc",
-    "test": "mocha --compilers ts:ts-node/register 'src/**/__tests__/*.spec.ts'",
+    "test": "mocha --watch-extensions tsx,ts  --compilers ts:ts-node/register 'src/**/__tests__/*.spec.*'",
     "test-watch": "npm t -- -w -R min",
     "coverage": "nyc npm t",
     "prepublish": "npm run lint && npm t && npm run build"
   },
-  "dependencies": {},
+  "dependencies": {
+    "preact": "^8.1.0"
+  },
   "devDependencies": {
     "@types/chai": "^4.0.0",
     "@types/mocha": "^2.2.41",
     "chai": "^4.0.2",
     "mocha": "^3.3.0",
     "nyc": "^11.0.2",
+    "prettier": "^1.4.4",
     "rimraf": "^2.6.1",
     "ts-node": "^3.0.2",
     "tslint": "^5.1.0",
@@ -54,5 +57,8 @@
       "lcovonly"
     ],
     "all": true
+  },
+  "peerDependencies": {
+    "preact": "^8.1.0"
   }
 }

@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es6",
+    "target": "es2017",
     "noImplicitAny": true,
     "sourceMap": true,
     "pretty": true,
     "declaration": true,
-    "outDir": "dist/"
+    "outDir": "dist/",
+    "jsx": "react",
+    "jsxFactory": "h"
   },
   "exclude": [
     "node_modules"
