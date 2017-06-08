@@ -1,0 +1,11 @@
+node_modules/
+.nyc_output/
+coverage/
+scripts/
+src/
+.editorconfig
+.npmignore
+.travis.yml
+.gitignore
+tsconfig.json
+tslint.json
