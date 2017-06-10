@@ -38,7 +38,7 @@ export function renderToString(
 
   // Text node
   if (typeof vnode === "string") {
-    return renderer.onTextNode(vnode, options.depth);
+    return renderer.onTextNode(encode(vnode), options.depth);
   }
 
   const { depth, shallow, sort } = options;
@@ -92,7 +92,8 @@ export function renderToString(
         }
         name = "class";
       } else if (name === "style") {
-        value = "STYLE";
+        // TODO
+        value = "";
       } else if (name === "children") {
         continue;
       }
@@ -100,7 +101,7 @@ export function renderToString(
       if (name === "dangerouslySetInnerHTML") {
         html += renderer.onProp(name, value.__html, depth);
       } else {
-        if (value !== true && value !== false) {
+        if (typeof value === "string") {
           value = encode(value);
         }
         html += renderer.onProp(name, value, depth);

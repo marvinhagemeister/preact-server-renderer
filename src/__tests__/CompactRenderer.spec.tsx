@@ -6,34 +6,40 @@ import CompactRenderer from "../CompactRenderer";
 const renderer = new CompactRenderer();
 
 describe("CompactRenderer", () => {
+  const r = (component: JSX.Element) => render(component, renderer);
+
   it("should render self-closing elements", () => {
-    const res = render(<meta accept="foo" />, renderer);
+    const res = r(<meta accept="foo" />);
     t.equal(res, '<meta accept="foo" />');
   });
 
   it("should render div", () => {
-    const res = render(<div />, renderer);
+    const res = r(<div />);
     t.equal(res, "<div></div>");
   });
 
   it("should render text children", () => {
-    const res = render(<div>foo</div>, renderer);
+    const res = r(<div>foo</div>);
     t.equal(res, "<div>foo</div>");
   });
 
+  it("should encode text children", () => {
+    const res = r(<div>{"<foo"}</div>);
+    t.equal(res, "<div>&lt;foo</div>");
+  });
+
   it("should render nested elements", () => {
-    const res = render(
+    const res = r(
       <div>
         <div><p>foo</p></div>
       </div>,
-      renderer,
     );
     t.equal(res, "<div><div><p>foo</p></div></div>");
   });
 
   it("should render components", () => {
     const Foo = () => <div>foo</div>;
-    const res = render(<div><Foo /></div>, renderer);
+    const res = r(<div><Foo /></div>);
     t.equal(res, "<div><div>foo</div></div>");
   });
 
@@ -47,5 +53,41 @@ describe("CompactRenderer", () => {
     const Foo = (props: { a: string }) => <div>foo {props.a}</div>;
     const res = render(<div><Foo a="bar" /></div>, renderer, { shallow: true });
     t.equal(res, '<div><Foo a="bar" /></div>');
+  });
+
+  it("should omit newlines in attributes", () => {
+    const res = r(
+      <div class={`foo\n\tbar\n\tbaz`}>
+        <a>a</a>
+        <b>b</b>
+        c
+      </div>,
+    );
+
+    t.equal(res, '<div class="foo\n\tbar\n\tbaz"><a>a</a><b>b</b>c</div>');
+  });
+
+  it("should escape falsey attributes", () => {
+    const res = r(<div data-a={null} data-b={undefined} data-c={false} />);
+    t.equal(res, '<div data-a="null" data-b="undefined"></div>');
+
+    t.equal(render(<div data-foo={0} />, renderer), '<div data-foo="0"></div>');
+  });
+
+  it("should collapse collapsible attributes", () => {
+    const res = r(<div class="" style="" data-foo={true} data-bar />);
+
+    t.equal(res, '<div class="" style="" data-foo data-bar></div>');
+  });
+
+  it("should encode entities", () => {
+    const res = r(<div data-a={'"<>&'}>{'"<>&'}</div>);
+
+    t.equal(res, '<div data-a="&quot;&lt;&gt;&amp;">&quot;&lt;&gt;&amp;</div>');
+  });
+
+  it("should omit falsey children", () => {
+    const res = r(<div>{null}|{undefined}|{false}</div>);
+    t.equal(res, "<div>||</div>");
   });
 });

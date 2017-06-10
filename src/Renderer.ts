@@ -1,5 +1,9 @@
 export interface Renderer {
-  onProp(name: string, value: string, depth: number): string;
+  onProp(
+    name: string,
+    value: string | boolean | undefined | null,
+    depth: number,
+  ): string;
   onOpenTag(
     name: string,
     hasChildren: boolean,
