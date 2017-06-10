@@ -16,19 +16,22 @@
     "prepublish": "npm run lint && npm t && npm run build"
   },
   "dependencies": {
-    "preact": "^8.1.0"
+    "preact": "^8.1.0",
+    "vdom-utils": "^0.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.0.0",
     "@types/mocha": "^2.2.41",
+    "@types/sinon": "^2.3.1",
     "chai": "^4.0.2",
     "mocha": "^3.3.0",
     "nyc": "^11.0.2",
     "prettier": "^1.4.4",
     "rimraf": "^2.6.1",
+    "sinon": "^2.3.2",
     "ts-node": "^3.0.2",
     "tslint": "^5.1.0",
-    "tslint-config-sevenval": "^0.6.0",
+    "tslint-config-sevenval": "^0.6.1",
     "typescript": "^2.3.1"
   },
   "nyc": {
