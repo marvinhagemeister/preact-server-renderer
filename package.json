@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "bench": "ts-node benchmark/index.tsx",
-    "clean": "rimraf dist/",
+    "cleanup": "rimraf dist/",
     "lint": "tslint 'src/**/*.ts'",
     "watch": "tsc -w",
     "build": "npm run clean && tsc",
@@ -22,9 +22,11 @@
     "vdom-utils": "^0.0.1"
   },
   "devDependencies": {
+    "@types/benchmark": "^1.0.30",
     "@types/chai": "^4.0.0",
     "@types/mocha": "^2.2.41",
     "@types/sinon": "^2.3.1",
+    "benchmark": "^2.1.4",
     "chai": "^4.0.2",
     "minibench": "^0.0.2",
     "mocha": "^3.3.0",
