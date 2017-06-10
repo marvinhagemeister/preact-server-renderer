@@ -1,3 +1,4 @@
-import benchjsx from "./jsx.bench";
+import benchjsx, { bench2 } from "./jsx.bench";
 
 benchjsx();
+bench2();

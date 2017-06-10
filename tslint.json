@@ -1,3 +1,6 @@
 {
-  "extends": "tslint-config-sevenval"
+  "extends": "tslint-config-sevenval",
+  "rules": {
+    "prefer-for-of": false
+  }
 }
