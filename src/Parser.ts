@@ -1,5 +1,5 @@
 import { VNode } from "preact";
-import { escapeAttr as encode, VOID_ELEMENTS } from "vdom-utils";
+import { escapeAttr as encode, VOID_ELEMENTS, padStart } from "vdom-utils";
 import { getComponentName } from "./utils";
 
 export interface Renderer {
@@ -19,7 +19,7 @@ export interface Renderer {
   ): void;
   onTextNode(text: string, depth: number): void;
   onCloseTag(name: string, isVoid: boolean, depth: number): void;
-  onDone(): void;
+  onDone(html: string): void;
 }
 
 export interface Options {
@@ -43,31 +43,21 @@ export function parse(
     ...defaultOpts,
     ...options,
   });
-  renderer.onDone();
+  renderer.onDone("");
 }
 
 export function walk(
-  vnode: VNode | string | null | boolean,
+  vnode: VNode | string | undefined,
   renderer: Renderer,
   options: Options,
 ) {
-  if (
-    vnode === null ||
-    vnode === undefined ||
-    vnode === false ||
-    vnode === true
-  ) {
+  // Text node
+  if (typeof vnode === "string") {
+    renderer.onTextNode(vnode, options.depth);
     return;
   }
 
   const { depth, shallow, sort } = options;
-
-  // Text node
-  if (typeof vnode === "string") {
-    renderer.onTextNode(vnode, depth);
-    return;
-  }
-
   const { attributes } = vnode;
   let { nodeName, children } = vnode;
 
@@ -82,12 +72,16 @@ export function walk(
 
   const hasAttributes = attributes !== undefined;
   const isVoid =
-    (typeof nodeName === "string" && VOID_ELEMENTS.includes(nodeName)) ||
+    VOID_ELEMENTS.indexOf(nodeName as string) > -1 ||
     (isComponent && children.length === 0);
+
+  if (hasAttributes && vnode.attributes.children !== undefined) {
+    children = vnode.attributes.children;
+  }
 
   renderer.onOpenTag(
     nodeName as string,
-    Boolean(vnode.children || vnode.attributes.chidren),
+    hasAttributes && children.length > 0,
     isVoid,
     depth,
   );
@@ -98,13 +92,12 @@ export function walk(
       keys = keys.sort();
     }
 
-    for (let name of keys) {
+    const keyLen = keys.length;
+    for (var i = 0; i < keyLen; i++) {
+      let name = keys[i];
       let value = attributes[name];
 
-      if (value === true || value === false) {
-        renderer.onProp(name, value, depth);
-        continue;
-      } else if (name === "className") {
+      if (name === "className") {
         if (attributes.class !== undefined) {
           continue;
         }
@@ -112,7 +105,6 @@ export function walk(
       } else if (name === "style") {
         value = "STYLE";
       } else if (name === "children") {
-        children = attributes.children;
         continue;
       }
 
@@ -132,10 +124,11 @@ export function walk(
     depth,
   );
 
-  if (children !== undefined) {
-    for (const child of children) {
+  const childrenLen = children.length;
+  if (childrenLen > 0) {
+    for (var j = 0; j < childrenLen; j++) {
       options.depth += 1;
-      walk(child, renderer, options);
+      walk(children[j], renderer, options);
     }
   }
 

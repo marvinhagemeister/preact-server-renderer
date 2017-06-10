@@ -7,7 +7,7 @@ export default function renderSync(
   renderer: Renderer,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    renderer.onDone = resolve;
+    renderer.onDone = (html: string) => resolve(html);
     parse(vnode, renderer);
   });
 }

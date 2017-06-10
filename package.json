@@ -28,7 +28,6 @@
     "@types/sinon": "^2.3.1",
     "benchmark": "^2.1.4",
     "chai": "^4.0.2",
-    "minibench": "^0.0.2",
     "mocha": "^3.3.0",
     "nyc": "^11.0.2",
     "preact-render-to-string": "^3.6.3",
