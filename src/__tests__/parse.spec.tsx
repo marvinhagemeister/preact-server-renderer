@@ -3,12 +3,12 @@ import { assert as t } from "chai";
 import { parse } from "../Parser";
 import StubRenderer from "./StubRenderer";
 
-describe.only("parse", () => {
+describe("parse", () => {
   it("should swap className with class", done => {
     const stub = new StubRenderer(() => {
-      t.deepEqual(stub.onOpenTag.args[0], ["div"]);
+      t.deepEqual(stub.onOpenTag.args[0], ["div", true, false, 0]);
       t.equal(stub.onProp.callCount, 1);
-      t.deepEqual(stub.onProp.args[0], ["class", "foo"]);
+      t.deepEqual(stub.onProp.args[0], ["class", "foo", 0]);
       done();
     });
     parse(<div className="foo" />, stub);
@@ -24,6 +24,7 @@ describe.only("parse", () => {
       t.deepEqual(stub.onProp.args[0], [
         "dangerouslySetInnerHTML",
         html.__html,
+        0,
       ]);
       done();
     });
@@ -33,9 +34,9 @@ describe.only("parse", () => {
 
   it("should parse boolean props", done => {
     const stub = new StubRenderer(() => {
-      t.deepEqual(stub.onOpenTag.args[0], ["input"]);
+      t.deepEqual(stub.onOpenTag.args[0], ["input", true, true, 0]);
       t.equal(stub.onProp.callCount, 1);
-      t.deepEqual(stub.onProp.args[0], ["disabled", true]);
+      t.deepEqual(stub.onProp.args[0], ["disabled", true, 0]);
       done();
     });
 
@@ -45,7 +46,7 @@ describe.only("parse", () => {
   it.skip("should convert style object to string", done => {
     const stub = new StubRenderer(() => {
       t.equal(stub.onProp.callCount, 1);
-      t.deepEqual(stub.onProp.args[0], ["style", "color: red;"]);
+      t.deepEqual(stub.onProp.args[0], ["style", "color: red;", 0]);
       done();
     });
 

@@ -10,6 +10,8 @@ export default class StubRenderer implements Renderer {
 
   onProp = sinon.spy();
   onOpenTag = sinon.spy();
+  onOpenTagClose = sinon.spy();
+  onTextNode = sinon.spy();
   onCloseTag = sinon.spy();
 
   onDone() {

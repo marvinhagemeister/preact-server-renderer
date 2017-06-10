@@ -2,7 +2,7 @@ import { h, ComponentConstructor } from "preact";
 import { assert as t } from "chai";
 import render, { Options } from "../index";
 
-describe("renderToString", () => {
+describe.skip("renderToString", () => {
   describe("compact mode", () => {
     const r = (element: any) => render(element, { mode: "compact" });
 
