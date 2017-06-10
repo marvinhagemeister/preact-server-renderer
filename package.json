@@ -10,7 +10,7 @@
     "cleanup": "rimraf dist/",
     "lint": "tslint 'src/**/*.ts'",
     "watch": "tsc -w",
-    "build": "npm run clean && tsc",
+    "build": "npm run cleanup && tsc",
     "test": "mocha --watch-extensions tsx,ts  --compilers ts:ts-node/register 'src/**/__tests__/*.spec.*'",
     "test-watch": "npm t -- -w -R min",
     "coverage": "nyc npm t",
@@ -19,7 +19,7 @@
   "dependencies": {
     "@types/node": "^7.0.29",
     "preact": "^8.1.0",
-    "vdom-utils": "^0.0.1"
+    "vdom-utils": "^0.0.2"
   },
   "devDependencies": {
     "@types/benchmark": "^1.0.30",
