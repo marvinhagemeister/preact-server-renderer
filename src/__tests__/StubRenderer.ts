@@ -1,5 +1,6 @@
 import * as sinon from "sinon";
 import { Renderer } from "../Renderer";
+import { render } from "../renderSync";
 
 export default class StubRenderer implements Renderer {
   onProp = sinon.spy();
@@ -14,3 +15,6 @@ export default class StubRenderer implements Renderer {
     this.onProp.reset();
   }
 }
+
+export const renderHelper = (renderer: Renderer) => (component: JSX.Element) =>
+  render(component, renderer);
