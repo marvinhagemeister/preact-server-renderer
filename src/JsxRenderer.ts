@@ -1,30 +1,38 @@
 import { padStart } from "vdom-utils";
-import { Renderer } from "./Parser";
+import { Renderer } from "./Renderer";
 
-const tabSize = 2;
+export interface Options {
+  indent: number;
+}
+
+const defaultOpts: Options = {
+  indent: 2,
+};
 
 export default class JsxRenderer implements Renderer {
-  html: string = "";
-  cb: (html: string) => any;
+  indent: number;
 
-  constructor(cb: (html: string) => any) {
-    this.cb = cb;
+  constructor(options: Partial<Options> = defaultOpts) {
+    Object.assign(this, defaultOpts, options);
   }
 
-  onProp(name: string, value: string, depth: number) {
-    this.html += "\n" + padStart(`${name}="${value}"`, (depth + 1) * tabSize);
+  onProp(name: string, value: string, depth: number): string {
+    const indent = (depth + 1) * this.indent;
+    return "\n" + padStart(name + '="' + value + '"', indent);
   }
 
   onOpenTag(
     name: string,
-    hasChildren: boolean,
+    hasAttributes: boolean,
     isVoid: boolean,
     depth: number,
-  ) {
-    this.html += padStart("<" + name, depth * tabSize);
-    if (!hasChildren) {
-      this.html += isVoid ? "\n" : "/>\n";
+  ): string {
+    let data = padStart("<" + name, depth * this.indent);
+    if (!hasAttributes) {
+      data += isVoid ? " />\n" : "";
     }
+
+    return data;
   }
 
   onOpenTagClose(
@@ -33,29 +41,30 @@ export default class JsxRenderer implements Renderer {
     isVoid: boolean,
     hasChildren: boolean,
     depth: number,
-  ) {
+  ): string {
+    let data = "";
     if (hasAttributes) {
-      this.html += "\n";
+      data += isVoid ? "\n/>\n" : "\n";
+    } else if (!isVoid) {
+      data += ">";
     }
-
-    this.html += isVoid ? "/>\n" : ">";
 
     if (hasChildren) {
-      this.html += "\n";
+      data += "\n";
     }
+
+    return data;
   }
 
-  onTextNode(text: string, depth: number) {
-    this.html += padStart(text + "\n", depth * tabSize);
+  onTextNode(text: string, depth: number): string {
+    return padStart(text + "\n", depth * this.indent);
   }
 
-  onCloseTag(name: string, isVoid: boolean, depth: number) {
+  onCloseTag(name: string, isVoid: boolean, depth: number): string {
     if (!isVoid) {
-      this.html += padStart("</" + name + ">", depth * tabSize) + "\n";
+      return padStart("</" + name + ">", depth * this.indent) + "\n";
     }
-  }
 
-  onDone() {
-    this.cb(this.html);
+    return "";
   }
 }

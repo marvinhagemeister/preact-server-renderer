@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es2017",
-    "noImplicitAny": true,
+    "strict": true,
     "sourceMap": true,
     "pretty": true,
     "declaration": true,
@@ -16,8 +16,5 @@
   ],
   "include": [
     "src/"
-  ],
-  "files": [
-    "./src/index.ts"
   ]
 }
