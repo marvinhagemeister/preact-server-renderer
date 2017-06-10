@@ -23,22 +23,5 @@ export function encode(s: any) {
 }
 
 export function getComponentName(component: ComponentConstructor<any, any>) {
-  return "foo";
+  return component.name;
 }
-
-export const VOID_ELEMENTS = [
-  "area",
-  "base",
-  "br",
-  "col",
-  "embed",
-  "hr",
-  "img",
-  "input",
-  "link",
-  "meta",
-  "param",
-  "source",
-  "track",
-  "wbr",
-];
