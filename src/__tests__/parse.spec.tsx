@@ -38,7 +38,7 @@ describe("parse", () => {
     t.deepEqual(stub.onProp.args[0], ["disabled", true, 0]);
   });
 
-  it.skip("should convert style object to string", done => {
+  it("should convert style object to string", () => {
     const stub = new StubRenderer();
     render(<div style={{ color: "red" }} />, stub);
 
