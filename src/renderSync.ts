@@ -1,10 +1,13 @@
 import { VNode } from "preact";
 import JsxRenderer from "./JsxRenderer";
-import { parse } from "./Parser";
+import { parse, Renderer } from "./Parser";
 
-export default function renderSync(vnode: VNode): Promise<string> {
+export default function renderSync(
+  vnode: VNode,
+  renderer: Renderer,
+): Promise<string> {
   return new Promise((resolve, reject) => {
-    const renderer = new JsxRenderer(resolve);
+    renderer.onDone = resolve;
     parse(vnode, renderer);
   });
 }

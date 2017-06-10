@@ -6,6 +6,7 @@
   "author": "Marvin Hagemeister <marvin@marvinhagemeister.de>",
   "license": "MIT",
   "scripts": {
+    "bench": "ts-node benchmark/index.tsx",
     "clean": "rimraf dist/",
     "lint": "tslint 'src/**/*.ts'",
     "watch": "tsc -w",
@@ -16,6 +17,7 @@
     "prepublish": "npm run lint && npm t && npm run build"
   },
   "dependencies": {
+    "@types/node": "^7.0.29",
     "preact": "^8.1.0",
     "vdom-utils": "^0.0.1"
   },
@@ -24,8 +26,10 @@
     "@types/mocha": "^2.2.41",
     "@types/sinon": "^2.3.1",
     "chai": "^4.0.2",
+    "minibench": "^0.0.2",
     "mocha": "^3.3.0",
     "nyc": "^11.0.2",
+    "preact-render-to-string": "^3.6.3",
     "prettier": "^1.4.4",
     "rimraf": "^2.6.1",
     "sinon": "^2.3.2",
