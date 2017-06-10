@@ -1,17 +1,17 @@
 import { h } from "preact";
-import * as Bench2 from "benchmark";
-import { render, JsxRenderer } from "../dist/index";
+import * as Benchmark from "benchmark";
+import { render, CompactRenderer } from "../dist/index";
 import { view } from "./components";
 import { logCycle, logWinner } from "./helpers";
 
 /* tslint:disable:no-var-requires no-console */
-const renderToString = require("preact-render-to-string/jsx");
+const renderToString = require("preact-render-to-string");
 
-const syncRenderer = new JsxRenderer();
+const syncRenderer = new CompactRenderer();
 
-export function bench2() {
+export function bench1() {
   return new Promise(resolve => {
-    new Bench2.Suite("Jsx")
+    new Benchmark.Suite("Compact")
       .add("preact-render-to-string", async () => renderToString(view))
       .add("preact-stream-renderer", () => render(view, syncRenderer))
       .on("cycle", logCycle)
