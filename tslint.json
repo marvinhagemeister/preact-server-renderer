@@ -1,6 +1,8 @@
 {
   "extends": "tslint-config-sevenval",
   "rules": {
-    "prefer-for-of": false
+    "prefer-for-of": false,
+    "no-var-keyword": false,
+    "prefer-const": false
   }
 }
