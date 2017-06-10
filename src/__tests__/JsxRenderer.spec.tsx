@@ -2,31 +2,32 @@ import { h } from "preact";
 import { assert as t } from "chai";
 import { render } from "../renderSync";
 import JsxRenderer from "../JsxRenderer";
-
-const renderer = new JsxRenderer();
+import { renderHelper } from "./StubRenderer";
 
 describe("JsxRenderer", () => {
+  const renderer = new JsxRenderer();
+  const r = renderHelper(renderer);
+
   it("should render self-closing elements", () => {
-    const res = render(<meta accept="foo" />, renderer);
+    const res = r(<meta accept="foo" />);
     t.equal(res, '<meta\n  accept="foo"\n/>\n');
   });
 
   it("should render div", () => {
-    const res = render(<div />, renderer);
+    const res = r(<div />);
     t.equal(res, "<div></div>\n");
   });
 
   it("should render text children", () => {
-    const res = render(<div>foo</div>, renderer);
+    const res = r(<div>foo</div>);
     t.equal(res, "<div>\n  foo\n</div>\n");
   });
 
   it("should render nested elements", () => {
-    const res = render(
+    const res = r(
       <div>
         <div><p>foo</p></div>
       </div>,
-      renderer,
     );
     t.equal(
       res,
@@ -36,7 +37,7 @@ describe("JsxRenderer", () => {
 
   it("should render components", () => {
     const Foo = () => <div>foo</div>;
-    const res = render(<div><Foo /></div>, renderer);
+    const res = r(<div><Foo /></div>);
     t.equal(res, "<div>\n  <div>\n    foo\n  </div>\n</div>\n");
   });
 

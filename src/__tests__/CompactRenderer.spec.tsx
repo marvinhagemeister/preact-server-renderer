@@ -2,11 +2,11 @@ import { h } from "preact";
 import { assert as t } from "chai";
 import { render } from "../renderSync";
 import CompactRenderer from "../CompactRenderer";
-
-const renderer = new CompactRenderer();
+import { renderHelper } from "./StubRenderer";
 
 describe("CompactRenderer", () => {
-  const r = (component: JSX.Element) => render(component, renderer);
+  const renderer = new CompactRenderer();
+  const r = renderHelper(renderer);
 
   it("should render self-closing elements", () => {
     const res = r(<meta accept="foo" />);
@@ -71,7 +71,7 @@ describe("CompactRenderer", () => {
     const res = r(<div data-a={null} data-b={undefined} data-c={false} />);
     t.equal(res, '<div data-a="null" data-b="undefined"></div>');
 
-    t.equal(render(<div data-foo={0} />, renderer), '<div data-foo="0"></div>');
+    t.equal(r(<div data-foo={0} />), '<div data-foo="0"></div>');
   });
 
   it("should collapse collapsible attributes", () => {
