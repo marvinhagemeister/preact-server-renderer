@@ -2,8 +2,18 @@ import { padStart } from "vdom-utils";
 import { Renderer } from "./Renderer";
 
 export default class CompactRenderer implements Renderer {
-  onProp(name: string, value: string, depth: number): string {
-    return name + '="' + value + '"';
+  onProp(
+    name: string,
+    value: string | boolean | undefined | null,
+    depth: number,
+  ): string {
+    if (value === false) {
+      return "";
+    } else if (value === true) {
+      return " " + name;
+    }
+
+    return " " + name + '="' + value + '"';
   }
 
   onOpenTag(
@@ -15,8 +25,6 @@ export default class CompactRenderer implements Renderer {
     let data = "<" + name;
     if (!hasAttributes) {
       data += isVoid ? " />" : "";
-    } else {
-      data += " ";
     }
 
     return data;
@@ -31,7 +39,7 @@ export default class CompactRenderer implements Renderer {
   ): string {
     let data = "";
     if (hasAttributes) {
-      data += isVoid ? " />" : "";
+      data += isVoid ? " />" : ">";
     } else if (!isVoid) {
       data += ">";
     }
