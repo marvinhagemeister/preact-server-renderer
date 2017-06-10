@@ -1,22 +1,37 @@
 import { VNode } from "preact";
-import { escapeAttr as encode } from "vdom-utils";
+import { escapeAttr as encode, VOID_ELEMENTS } from "vdom-utils";
 import { getComponentName } from "./utils";
 
 export interface Renderer {
-  onProp(name: string, value: string): void;
-  onOpenTag(name: string): void;
-  onCloseTag(name: string): void;
+  onProp(name: string, value: string, depth: number): void;
+  onOpenTag(
+    name: string,
+    hasChildren: boolean,
+    isVoid: boolean,
+    depth: number,
+  ): void;
+  onOpenTagClose(
+    name: string,
+    hasAttributes: boolean,
+    isVoid: boolean,
+    hasChildren: boolean,
+    depth: number,
+  ): void;
+  onTextNode(text: string, depth: number): void;
+  onCloseTag(name: string, isVoid: boolean, depth: number): void;
   onDone(): void;
 }
 
 export interface Options {
   sort: boolean;
   shallow: boolean;
+  depth?: number;
 }
 
 const defaultOpts: Options = {
   sort: false,
   shallow: false,
+  depth: 0,
 };
 
 export function parse(
@@ -32,7 +47,7 @@ export function parse(
 }
 
 export function walk(
-  vnode: VNode | null | boolean,
+  vnode: VNode | string | null | boolean,
   renderer: Renderer,
   options: Options,
 ) {
@@ -45,31 +60,41 @@ export function walk(
     return;
   }
 
-  const { attributes } = vnode;
-  let { nodeName, children } = vnode;
+  const { depth, shallow, sort } = options;
 
   // Text node
-  if (nodeName === undefined) {
-    // rendererencode(vnode);
-    console.log("FIXME");
+  if (typeof vnode === "string") {
+    renderer.onTextNode(vnode, depth);
     return;
   }
+
+  const { attributes } = vnode;
+  let { nodeName, children } = vnode;
 
   // Component
   let isComponent = false;
   if (typeof nodeName === "function") {
     isComponent = true;
-    if (options.shallow) {
+    if (shallow) {
       nodeName = getComponentName(nodeName);
-      renderer.onOpenTag(nodeName);
     }
-  } else {
-    renderer.onOpenTag(nodeName);
   }
 
-  if (attributes !== undefined) {
+  const hasAttributes = attributes !== undefined;
+  const isVoid =
+    (typeof nodeName === "string" && VOID_ELEMENTS.includes(nodeName)) ||
+    (isComponent && children.length === 0);
+
+  renderer.onOpenTag(
+    nodeName as string,
+    Boolean(vnode.children || vnode.attributes.chidren),
+    isVoid,
+    depth,
+  );
+
+  if (hasAttributes) {
     let keys = Object.keys(attributes);
-    if (options.sort) {
+    if (sort) {
       keys = keys.sort();
     }
 
@@ -77,7 +102,7 @@ export function walk(
       let value = attributes[name];
 
       if (value === true || value === false) {
-        renderer.onProp(name, value);
+        renderer.onProp(name, value, depth);
         continue;
       } else if (name === "className") {
         if (attributes.class !== undefined) {
@@ -92,16 +117,27 @@ export function walk(
       }
 
       if (name === "dangerouslySetInnerHTML") {
-        renderer.onProp(name, value.__html);
+        renderer.onProp(name, value.__html, depth);
       } else {
-        renderer.onProp(name, encode(value));
+        renderer.onProp(name, encode(value), depth);
       }
     }
   }
 
+  renderer.onOpenTagClose(
+    nodeName as string,
+    hasAttributes,
+    isVoid,
+    children !== undefined && children.length > 0,
+    depth,
+  );
+
   if (children !== undefined) {
     for (const child of children) {
+      options.depth += 1;
       walk(child, renderer, options);
     }
   }
+
+  renderer.onCloseTag(nodeName as string, isVoid, depth);
 }

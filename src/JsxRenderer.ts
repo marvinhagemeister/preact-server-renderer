@@ -1,29 +1,57 @@
 import { padStart } from "vdom-utils";
 import { Renderer } from "./Parser";
 
+const tabSize = 2;
+
 export default class JsxRenderer implements Renderer {
-  indent: number = 0;
   html: string = "";
-  hasAttrs: boolean = false;
   cb: (html: string) => any;
 
   constructor(cb: (html: string) => any) {
     this.cb = cb;
   }
 
-  onProp(name: string, value: string) {
-    this.html += "\n" + padStart(name + "=" + value, this.indent + 1);
+  onProp(name: string, value: string, depth: number) {
+    this.html += "\n" + padStart(`${name}="${value}"`, (depth + 1) * tabSize);
   }
 
-  onOpenTag(name: string) {
-    this.html += padStart("<" + name, this.indent);
+  onOpenTag(
+    name: string,
+    hasChildren: boolean,
+    isVoid: boolean,
+    depth: number,
+  ) {
+    this.html += padStart("<" + name, depth * tabSize);
+    if (!hasChildren) {
+      this.html += isVoid ? "\n" : "/>\n";
+    }
   }
 
-  onCloseTag(name: string) {
-    if (!this.hasAttrs) {
-      this.html += name + "\n";
-    } else {
-      this.html += padStart(name, this.indent) + "\n";
+  onOpenTagClose(
+    name: string,
+    hasAttributes: boolean,
+    isVoid: boolean,
+    hasChildren: boolean,
+    depth: number,
+  ) {
+    if (hasAttributes) {
+      this.html += "\n";
+    }
+
+    this.html += isVoid ? "/>\n" : ">";
+
+    if (hasChildren) {
+      this.html += "\n";
+    }
+  }
+
+  onTextNode(text: string, depth: number) {
+    this.html += padStart(text + "\n", depth * tabSize);
+  }
+
+  onCloseTag(name: string, isVoid: boolean, depth: number) {
+    if (!isVoid) {
+      this.html += padStart("</" + name + ">", depth * tabSize) + "\n";
     }
   }
 
