@@ -45,4 +45,10 @@ describe("JsxRenderer", () => {
     const res = render(<div><Foo /></div>, renderer, { shallow: true });
     t.equal(res, "<div>\n  <Foo />\n</div>\n");
   });
+
+  it("should shallow render components with attributes", () => {
+    const Foo = (props: { a: string }) => <div>foo {props.a}</div>;
+    const res = render(<div><Foo a="bar" /></div>, renderer, { shallow: true });
+    t.equal(res, '<div>\n  <Foo\n    a="bar"\n  />\n</div>\n');
+  });
 });

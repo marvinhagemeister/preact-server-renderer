@@ -5,14 +5,11 @@ export interface Options {
   indent: number;
 }
 
-const defaultOpts: Options = {
-  indent: 2,
-};
-
 export default class JsxRenderer implements Renderer {
   indent: number;
 
-  constructor(options: Partial<Options> = defaultOpts) {
+  constructor(options: Partial<Options> = {}) {
+    const defaultOpts: Options = { indent: 2 };
     Object.assign(this, defaultOpts, options);
   }
 
@@ -44,7 +41,7 @@ export default class JsxRenderer implements Renderer {
   ): string {
     let data = "";
     if (hasAttributes) {
-      data += isVoid ? "\n/>\n" : "\n";
+      data += isVoid ? "\n" + padStart("/>\n", depth * this.indent) : "\n";
     } else if (!isVoid) {
       data += ">";
     }
