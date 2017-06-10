@@ -90,4 +90,40 @@ describe("CompactRenderer", () => {
     const res = r(<div>{null}|{undefined}|{false}</div>);
     t.equal(res, "<div>||</div>");
   });
+
+  it("does not close void elements with closing tags", () => {
+    const res = r(<input><p>Hello World</p></input>);
+    t.equal(res, "<input /><p>Hello World</p>");
+  });
+
+  it("should serialize object styles", () => {
+    const res = r(<div style={{ color: "red", border: "none" }} />);
+    t.equal(res, '<div style="color: red; border: none;"></div>');
+
+    const res2 = r(<div style={{}} />);
+    t.equal(res2, '<div style=""></div>');
+  });
+
+  it("should render SVG elements", () => {
+    const res = r(
+      <div>
+        <svg>
+          <image xlinkHref="#" />
+          <foreignObject>
+            <image xlinkHref="#" />
+          </foreignObject>
+          <g>
+            <image xlinkHref="#" />
+          </g>
+        </svg>
+      </div>,
+    );
+
+    t.equal(
+      res,
+      '<div><svg><image xlink:href="#"></image><foreignObject>' +
+        '<image xlink:href="#"></image></foreignObject><g>' +
+        '<image xlink:href="#"></image></g></svg></div>',
+    );
+  });
 });

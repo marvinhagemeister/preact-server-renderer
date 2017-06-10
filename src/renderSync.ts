@@ -1,5 +1,10 @@
 import { VNode } from "preact";
-import { escapeAttr as encode, VOID_ELEMENTS, padStart } from "vdom-utils";
+import {
+  escapeAttr as encode,
+  VOID_ELEMENTS,
+  padStart,
+  jsToCss,
+} from "vdom-utils";
 import { getComponentName } from "./utils";
 import { Renderer } from "./Renderer";
 
@@ -92,8 +97,18 @@ export function renderToString(
         }
         name = "class";
       } else if (name === "style") {
-        // TODO
-        value = "";
+        let styles = "";
+        const props = Object.keys(value);
+        const styleLen = props.length;
+        for (var k = 0; k < styleLen; k++) {
+          const prop = props[k];
+          styles +=
+            encode(jsToCss(prop)) + ": " + encode("" + value[prop]) + ";";
+          if (k !== styleLen - 1) {
+            styles += " ";
+          }
+        }
+        value = styles;
       } else if (name === "children") {
         continue;
       }
@@ -101,6 +116,10 @@ export function renderToString(
       if (name === "dangerouslySetInnerHTML") {
         html += renderer.onProp(name, value.__html, depth);
       } else {
+        if (name.startsWith("xlink")) {
+          name = name.toLowerCase().replace(/^xlink\:?(.+)/, "xlink:$1");
+        }
+
         if (typeof value === "string") {
           value = encode(value);
         }

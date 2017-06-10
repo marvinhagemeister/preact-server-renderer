@@ -11,4 +11,18 @@ const Component = () => {
   );
 };
 
+const Svg = () =>
+  <div>
+    <svg>
+      <image xlinkHref="#" />
+      <foreignObject>
+        <image xlinkHref="#" />
+      </foreignObject>
+      <g>
+        <image xlinkHref="#" />
+      </g>
+    </svg>
+  </div>;
+
+export const viewSvg = Svg();
 export const view = Component();
