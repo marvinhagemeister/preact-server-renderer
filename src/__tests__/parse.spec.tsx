@@ -1,88 +1,57 @@
 import { h } from "preact";
 import { assert as t } from "chai";
-import { parse } from "../Parser";
+import { render } from "../renderSync";
 import StubRenderer from "./StubRenderer";
 
 describe("parse", () => {
-  it("should swap className with class", done => {
-    const stub = new StubRenderer(() => {
-      t.deepEqual(stub.onOpenTag.args[0], ["div", true, false, 0]);
-      t.equal(stub.onProp.callCount, 1);
-      t.deepEqual(stub.onProp.args[0], ["class", "foo", 0]);
-      done();
-    });
-    parse(<div className="foo" />, stub);
+  it("should swap className with class", () => {
+    const stub = new StubRenderer();
+    render(<div className="foo" />, stub);
+
+    t.deepEqual(stub.onOpenTag.args[0], ["div", true, false, 0]);
+    t.equal(stub.onProp.callCount, 1);
+    t.deepEqual(stub.onProp.args[0], ["class", "foo", 0]);
   });
 
-  it("should parse dangerouslySetInnerHTML", done => {
+  it("should parse dangerouslySetInnerHTML", () => {
     const html = {
       __html: "<p>Hello</p>",
     };
 
-    const stub = new StubRenderer(() => {
-      t.equal(stub.onProp.callCount, 1);
-      t.deepEqual(stub.onProp.args[0], [
-        "dangerouslySetInnerHTML",
-        html.__html,
-        0,
-      ]);
-      done();
-    });
+    const stub = new StubRenderer();
+    render(<div dangerouslySetInnerHTML={html as any} />, stub);
 
-    parse(<div dangerouslySetInnerHTML={html as any} />, stub);
+    t.equal(stub.onProp.callCount, 1);
+    t.deepEqual(stub.onProp.args[0], [
+      "dangerouslySetInnerHTML",
+      html.__html,
+      0,
+    ]);
   });
 
-  it("should parse boolean props", done => {
-    const stub = new StubRenderer(() => {
-      t.deepEqual(stub.onOpenTag.args[0], ["input", true, true, 0]);
-      t.equal(stub.onProp.callCount, 1);
-      t.deepEqual(stub.onProp.args[0], ["disabled", true, 0]);
-      done();
-    });
+  it("should parse boolean props", () => {
+    const stub = new StubRenderer();
+    render(<input disabled />, stub);
 
-    parse(<input disabled />, stub);
+    t.deepEqual(stub.onOpenTag.args[0], ["input", true, true, 0]);
+    t.equal(stub.onProp.callCount, 1);
+    t.deepEqual(stub.onProp.args[0], ["disabled", true, 0]);
   });
 
   it.skip("should convert style object to string", done => {
-    const stub = new StubRenderer(() => {
-      t.equal(stub.onProp.callCount, 1);
-      t.deepEqual(stub.onProp.args[0], ["style", "color: red;", 0]);
-      done();
-    });
+    const stub = new StubRenderer();
+    render(<div style={{ color: "red" }} />, stub);
 
-    parse(<div style={{ color: "red" }} />, stub);
+    t.equal(stub.onProp.callCount, 1);
+    t.deepEqual(stub.onProp.args[0], ["style", "color: red;", 0]);
   });
 
-  it("should skip undefined nodes", done => {
-    const stub = new StubRenderer(() => {
-      t.equal(stub.onOpenTag.callCount, 0);
-      t.equal(stub.onCloseTag.callCount, 0);
-      t.equal(stub.onProp.callCount, 0);
-      done();
-    });
+  it("should skip undefined nodes", () => {
+    const stub = new StubRenderer();
+    render(undefined as any, stub);
 
-    parse(undefined, stub);
-  });
-
-  it("should skip null nodes", done => {
-    const stub = new StubRenderer(() => {
-      t.equal(stub.onOpenTag.callCount, 0);
-      t.equal(stub.onCloseTag.callCount, 0);
-      t.equal(stub.onProp.callCount, 0);
-      done();
-    });
-
-    parse(null, stub);
-  });
-
-  it("should skip boolean nodes", done => {
-    const stub = new StubRenderer(() => {
-      t.equal(stub.onOpenTag.callCount, 0);
-      t.equal(stub.onCloseTag.callCount, 0);
-      t.equal(stub.onProp.callCount, 0);
-      done();
-    });
-
-    parse(true as any, stub);
+    t.equal(stub.onOpenTag.callCount, 0);
+    t.equal(stub.onCloseTag.callCount, 0);
+    t.equal(stub.onProp.callCount, 0);
   });
 });
