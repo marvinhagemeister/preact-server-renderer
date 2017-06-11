@@ -71,6 +71,11 @@ describe("CompactRenderer", () => {
     t.equal(res, "<div></div>");
   });
 
+  it("should omit key and ref attributes", () => {
+    const res = r(<div key="foo" ref={() => undefined} />);
+    t.equal(res, "<div></div>");
+  });
+
   it("should encode entities", () => {
     const res = r(<div data-a={'"<>&'}>{'"<>&'}</div>);
 
