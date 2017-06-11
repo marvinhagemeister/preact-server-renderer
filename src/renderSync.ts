@@ -90,6 +90,7 @@ export function renderToString(
 
   html += renderer.onOpenTag(nodeName as string, hasAttributes, isVoid, depth);
 
+  let dangerHtml;
   if (hasAttributes) {
     let keys = Object.keys(attributes);
     if (sort) {
@@ -126,7 +127,7 @@ export function renderToString(
       }
 
       if (name === "dangerouslySetInnerHTML") {
-        html += renderer.onProp(name, value.__html, depth);
+        dangerHtml = value.__html;
       } else {
         if (name.startsWith("xlink")) {
           name = name.toLowerCase().replace(/^xlink\:?(.+)/, "xlink:$1");
@@ -147,6 +148,10 @@ export function renderToString(
     children.length > 0,
     depth,
   );
+
+  if (dangerHtml !== undefined) {
+    html += dangerHtml;
+  }
 
   const childrenLen = children.length;
   if (childrenLen > 0) {
