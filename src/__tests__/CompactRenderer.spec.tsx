@@ -64,6 +64,13 @@ describe("CompactRenderer", () => {
     t.equal(res, '<div class="" style="" data-foo data-bar></div>');
   });
 
+  it("should omit functions", () => {
+    /* tslint:disable */
+    const res = r(<div data-a={() => {}} data-b={function() {}} />);
+    /* tslint:enable */
+    t.equal(res, "<div></div>");
+  });
+
   it("should encode entities", () => {
     const res = r(<div data-a={'"<>&'}>{'"<>&'}</div>);
 
