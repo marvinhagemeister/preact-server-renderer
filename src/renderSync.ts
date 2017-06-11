@@ -109,7 +109,7 @@ export function renderToString(
         typeof value === "function"
       ) {
         continue;
-      } else if (name === "children") {
+      } else if (name === "children" || name === "key" || name === "ref") {
         continue;
       } else if (name === "className") {
         if (attributes.class !== undefined) {
