@@ -3,7 +3,7 @@ import { assert as t } from "chai";
 import { render } from "../renderSync";
 import StubRenderer from "./StubRenderer";
 
-describe("parse", () => {
+describe("renderSync", () => {
   it("should swap className with class", () => {
     const stub = new StubRenderer();
     render(<div className="foo" />, stub);
