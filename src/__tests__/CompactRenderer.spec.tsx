@@ -69,7 +69,7 @@ describe("CompactRenderer", () => {
 
   it("should escape falsey attributes", () => {
     const res = r(<div data-a={null} data-b={undefined} data-c={false} />);
-    t.equal(res, '<div data-a="null" data-b="undefined"></div>');
+    t.equal(res, "<div></div>");
 
     t.equal(r(<div data-foo={0} />), '<div data-foo="0"></div>');
   });
