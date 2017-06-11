@@ -94,8 +94,11 @@ describe("CompactRenderer", () => {
     t.equal(res, "<div><span>foo</span></div>");
   });
 
-  it.skip("should sort attributes", () => {
-    // TODO
+  it("should sort attributes", () => {
+    const res = render(<div style={{}} class="foo" />, renderer, {
+      sort: true,
+    });
+    t.equal(res, '<div class="foo" style=""></div>');
   });
 
   it("should render SVG elements", () => {
