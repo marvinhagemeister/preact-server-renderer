@@ -33,7 +33,6 @@
     "mocha": "^3.3.0",
     "nyc": "^11.0.2",
     "preact-render-to-string": "^3.6.3",
-    "prettier": "^1.4.4",
     "rimraf": "^2.6.1",
     "sinon": "^2.3.2",
     "ts-node": "^3.0.2",
