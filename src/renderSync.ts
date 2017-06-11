@@ -104,6 +104,8 @@ export function renderToString(
 
       if (value === undefined || value === null || value === false) {
         continue;
+      } else if (name === "children") {
+        continue;
       } else if (name === "className") {
         if (attributes.class !== undefined) {
           continue;
@@ -122,8 +124,6 @@ export function renderToString(
           }
         }
         value = styles;
-      } else if (name === "children") {
-        continue;
       }
 
       if (name === "dangerouslySetInnerHTML") {
