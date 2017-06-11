@@ -7,9 +7,7 @@ export default class CompactRenderer implements Renderer {
     value: string | boolean | undefined | null,
     depth: number,
   ): string {
-    if (value === false) {
-      return "";
-    } else if (value === true) {
+    if (value === true) {
       return " " + name;
     }
 
