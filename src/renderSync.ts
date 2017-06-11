@@ -91,7 +91,9 @@ export function renderToString(
       let name = keys[i];
       let value = attributes[name];
 
-      if (name === "className") {
+      if (value === undefined || value === null || value === false) {
+        continue;
+      } else if (name === "className") {
         if (attributes.class !== undefined) {
           continue;
         }
