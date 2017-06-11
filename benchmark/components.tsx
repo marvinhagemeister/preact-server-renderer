@@ -1,7 +1,21 @@
-import { h } from "preact";
+import { h, Component } from "preact";
+
+class Bar extends Component<any, any> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      foo: "baz",
+    };
+  }
+
+  render() {
+    return <div>Bar{this.state.foo}</div>;
+  }
+}
 
 const Foo = () => <div>Foo</div>;
-const Component = () => {
+
+const withComponent = () => {
   return (
     <div class="foo">
       Hello World!
@@ -25,4 +39,4 @@ const Svg = () =>
   </div>;
 
 export const viewSvg = Svg();
-export const view = Component();
+export const view = withComponent();
