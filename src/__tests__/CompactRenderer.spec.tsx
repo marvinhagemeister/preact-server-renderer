@@ -88,6 +88,16 @@ describe("CompactRenderer", () => {
     t.equal(res2, '<div style=""></div>');
   });
 
+  it("should dangerouslySetInnerHTML", () => {
+    const html = { __html: "<span>foo</span>" };
+    const res = r(<div dangerouslySetInnerHTML={html} />);
+    t.equal(res, "<div><span>foo</span></div>");
+  });
+
+  it.skip("should sort attributes", () => {
+    // TODO
+  });
+
   it("should render SVG elements", () => {
     const res = r(
       <div>
@@ -239,6 +249,14 @@ describe("CompactRenderer", () => {
     });
 
     it.skip("should pass context", () => {
+      // TODO
+    });
+
+    it.skip("should render high-order components", () => {
+      // TODO
+    });
+
+    it.skip("should lock state", () => {
       // TODO
     });
   });

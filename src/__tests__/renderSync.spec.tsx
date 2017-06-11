@@ -21,12 +21,7 @@ describe("renderSync", () => {
     const stub = new StubRenderer();
     render(<div dangerouslySetInnerHTML={html as any} />, stub);
 
-    t.equal(stub.onProp.callCount, 1);
-    t.deepEqual(stub.onProp.args[0], [
-      "dangerouslySetInnerHTML",
-      html.__html,
-      0,
-    ]);
+    t.equal(stub.onProp.callCount, 0);
   });
 
   it("should parse boolean props", () => {
