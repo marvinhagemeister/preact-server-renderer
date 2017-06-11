@@ -102,7 +102,12 @@ export function renderToString(
       let name = keys[i];
       let value = attributes[name];
 
-      if (value === undefined || value === null || value === false) {
+      if (
+        value === undefined ||
+        value === null ||
+        value === false ||
+        typeof value === "function"
+      ) {
         continue;
       } else if (name === "children") {
         continue;
