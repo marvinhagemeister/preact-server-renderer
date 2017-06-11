@@ -65,9 +65,8 @@ describe("CompactRenderer", () => {
   });
 
   it("should omit functions", () => {
-    /* tslint:disable */
+    /* tslint:disable-next-line */
     const res = r(<div data-a={() => {}} data-b={function() {}} />);
-    /* tslint:enable */
     t.equal(res, "<div></div>");
   });
 
