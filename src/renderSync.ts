@@ -5,7 +5,7 @@ import {
   padStart,
   jsToCss,
 } from "vdom-utils";
-import { getComponentName } from "./utils";
+import { getComponentName, getNodeProps } from "./utils";
 import { Renderer } from "./Renderer";
 
 export interface Options {
@@ -59,11 +59,21 @@ export function renderToString(
     } else {
       // Stateless
       let rendered;
+      const props = getNodeProps(vnode);
+
       if (
         !nodeName.prototype ||
         typeof nodeName.prototype.render !== "function"
       ) {
-        rendered = (nodeName as any)(vnode.attributes, undefined);
+        rendered = (nodeName as any)(props, undefined);
+      } else {
+        // Class components
+        const c = new nodeName(props, undefined);
+
+        if ((c as any).componentWillMount !== undefined) {
+          (c as any).componentWillMount();
+        }
+        rendered = c.render(props, undefined);
       }
       return renderToString(rendered, renderer, options);
     }
