@@ -15,7 +15,8 @@
     "test-watch": "npm t -- -w -R min",
     "coverage": "nyc npm t",
     "format": "prettier --trailing-comma=all --write 'src/**/*.{ts,tsx}'",
-    "prepublish": "npm run lint && npm t && npm run build"
+    "prepublish": "npm run lint && npm t && npm run build",
+    "precommit": "lint-staged"
   },
   "dependencies": {
     "@types/node": "^7.0.29",
