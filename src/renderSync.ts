@@ -49,14 +49,14 @@ export const createRenderer = (
   renderer: Renderer,
   options: Partial<Options> = {},
 ) => {
-  const opts: Options = {
+  const opts = {
     ...defaultOpts,
     ...options,
   };
 
   return (vnode: VNode) => {
     renderer.reset();
-    renderToString(vnode, renderer, opts);
+    renderToString(vnode, renderer, opts as Options);
     return renderer.html;
   };
 };
