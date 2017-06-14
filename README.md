@@ -97,7 +97,7 @@ interface and that's it!
 
 ```ts
 interface Renderer {
-  html: string;
+  output: string;
   /** Reset the current instance */
   reset(): void;
   /** Called when an attribute is parsed */

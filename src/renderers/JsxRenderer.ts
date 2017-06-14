@@ -7,7 +7,7 @@ export interface Options {
 
 export default class JsxRenderer implements Renderer {
   indent: number;
-  html: string = "";
+  output: string = "";
 
   constructor(options: Partial<Options> = {}) {
     const defaultOpts: Options = { indent: 2 };
@@ -15,12 +15,12 @@ export default class JsxRenderer implements Renderer {
   }
 
   reset() {
-    this.html = "";
+    this.output = "";
   }
 
   onProp(name: string, value: string, depth: number) {
     const indent = (depth + 1) * this.indent;
-    this.html += "\n" + padStart(name + '="' + value + '"', indent);
+    this.output += "\n" + padStart(name + '="' + value + '"', indent);
   }
 
   onOpenTag(
@@ -29,9 +29,9 @@ export default class JsxRenderer implements Renderer {
     isVoid: boolean,
     depth: number,
   ) {
-    this.html += padStart("<" + name, depth * this.indent);
+    this.output += padStart("<" + name, depth * this.indent);
     if (!hasAttributes) {
-      this.html += isVoid ? " />\n" : "";
+      this.output += isVoid ? " />\n" : "";
     }
   }
 
@@ -44,27 +44,27 @@ export default class JsxRenderer implements Renderer {
   ) {
     if (hasAttributes) {
       const closer = isVoid ? "/>\n" : ">";
-      this.html += "\n" + padStart(closer, depth * this.indent);
+      this.output += "\n" + padStart(closer, depth * this.indent);
     } else if (!isVoid) {
-      this.html += ">";
+      this.output += ">";
     }
 
     if (hasChildren) {
-      this.html += "\n";
+      this.output += "\n";
     }
   }
 
   onTextNode(text: string, depth: number) {
-    this.html += padStart(text + "\n", depth * this.indent);
+    this.output += padStart(text + "\n", depth * this.indent);
   }
 
   onCloseTag(name: string, isVoid: boolean, depth: number) {
     if (!isVoid) {
-      this.html += padStart("</" + name + ">", depth * this.indent) + "\n";
+      this.output += padStart("</" + name + ">", depth * this.indent) + "\n";
     }
   }
 
   onDangerousInnerHTML(html: string) {
-    this.html += html;
+    this.output += html;
   }
 }
