@@ -7,9 +7,9 @@ import {
 } from "vdom-utils";
 import { getComponentName, getNodeProps } from "./utils";
 
-export interface Renderer {
+export interface Renderer<T> {
   /** Will be returned when rendering is completed */
-  output: string;
+  output: T;
   /** Reset the current instance */
   reset(): void;
   /** Called when an attribute is parsed */
@@ -53,8 +53,8 @@ const defaultOpts: Options = {
   depth: 0,
 };
 
-export const createRenderer = (
-  renderer: Renderer,
+export const createRenderer = <T, R extends Renderer<T>>(
+  renderer: R,
   options: Partial<Options> = {},
 ) => {
   const opts = {
@@ -66,16 +66,16 @@ export const createRenderer = (
     opts.depth = defaultOpts.depth;
   }
 
-  return (vnode: VNode) => {
+  return (vnode: VNode): T => {
     renderer.reset();
-    renderToString(vnode, renderer, opts.depth, opts as Options);
+    walkTree(vnode, renderer, opts.depth, opts as Options);
     return renderer.output;
   };
 };
 
-export function renderToString(
+export function walkTree<T, R extends Renderer<T>>(
   vnode: VNode | string | undefined,
-  renderer: Renderer,
+  renderer: R,
   depth: number,
   options: Options,
 ): void {
@@ -116,7 +116,7 @@ export function renderToString(
         }
         rendered = c.render(props, undefined);
       }
-      renderToString(rendered, renderer, depth, options);
+      walkTree(rendered, renderer, depth, options);
       return;
     }
   }
@@ -203,7 +203,7 @@ export function renderToString(
     const childrenLen = children.length;
     if (childrenLen > 0) {
       for (var j = 0; j < childrenLen; j++) {
-        renderToString(children[j], renderer, depth + 1, options);
+        walkTree(children[j], renderer, depth + 1, options);
       }
     }
   }

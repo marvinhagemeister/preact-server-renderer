@@ -6,10 +6,11 @@ import { createBenchmark, logCycle, logWinner } from "./helpers";
 /* tslint:disable:no-var-requires no-console */
 const renderToString = require("preact-render-to-string");
 
-const syncRenderer = new CompactRenderer();
-
-const options = { depth: 0, shallow: false, sort: false };
-const render = createRenderer(syncRenderer, options);
+const render = createRenderer<string, CompactRenderer>(new CompactRenderer(), {
+  depth: 0,
+  shallow: false,
+  sort: false,
+});
 
 export function bench1() {
   const fn = () => renderToString(view);

@@ -4,12 +4,10 @@ import { createRenderer } from "../../renderSync";
 import JsxRenderer from "../JsxRenderer";
 
 describe("JsxRenderer", () => {
-  let r: (vnode: VNode) => string;
+  const renderer = new JsxRenderer();
+  const r = createRenderer<string, JsxRenderer>(renderer);
 
-  beforeEach(() => {
-    const renderer = new JsxRenderer();
-    r = createRenderer(renderer);
-  });
+  beforeEach(() => renderer.reset());
 
   it("should render self-closing elements", () => {
     const res = r(<meta accept="foo" />);

@@ -6,12 +6,10 @@ import CompactRenderer from "../CompactRenderer";
 /* tslint:disable:max-classes-per-file */
 
 describe("CompactRenderer", () => {
-  let render: (node: VNode) => string;
+  const renderer = new CompactRenderer();
+  const render = createRenderer<string, CompactRenderer>(renderer);
 
-  beforeEach(() => {
-    const renderer = new CompactRenderer();
-    render = createRenderer(renderer);
-  });
+  beforeEach(() => renderer.reset());
 
   it("should render self-closing elements", () => {
     const res = render(<meta accept="foo" />);
