@@ -1,5 +1,5 @@
 import { padStart } from "vdom-utils";
-import { Renderer } from "./renderSync";
+import { Renderer } from "../renderSync";
 
 export interface Options {
   indent: number;

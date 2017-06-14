@@ -1,6 +1,6 @@
 import { h, Component, VNode } from "preact";
 import { assert as t } from "chai";
-import { createRenderer } from "../renderSync";
+import { createRenderer } from "../../renderSync";
 import CompactRenderer from "../CompactRenderer";
 
 /* tslint:disable:max-classes-per-file */
