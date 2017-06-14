@@ -5,7 +5,7 @@ export interface Options {
   indent: number;
 }
 
-export default class JsxRenderer implements Renderer {
+export default class JsxRenderer implements Renderer<string> {
   indent: number;
   output: string = "";
 

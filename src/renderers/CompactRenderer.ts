@@ -1,7 +1,7 @@
 import { padStart } from "vdom-utils";
 import { Renderer } from "../renderSync";
 
-export default class CompactRenderer implements Renderer {
+export default class CompactRenderer implements Renderer<string> {
   output: string = "";
 
   onProp(
