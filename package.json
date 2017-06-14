@@ -1,10 +1,15 @@
 {
-  "name": "typescript-starter",
-  "version": "0.0.1",
-  "description": "typescript boilerplate project",
+  "name": "preact-server-renderer",
+  "version": "0.1.0",
+  "description": "Server-side renderer for preact",
   "main": "dist/index.js",
   "author": "Marvin Hagemeister <marvin@marvinhagemeister.de>",
   "license": "MIT",
+  "typings": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:marvinhagemeister/preact-server-renderer.git"
+  },
   "scripts": {
     "bench": "ts-node benchmark/index.ts",
     "cleanup": "rimraf dist/",
