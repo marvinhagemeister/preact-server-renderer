@@ -9,18 +9,22 @@ import { getComponentName, getNodeProps } from "./utils";
 
 export interface Renderer {
   html: string;
+  /** Reset the current instance */
   reset(): void;
+  /** Called when an attribute is parsed */
   onProp(
     name: string,
     value: string | boolean | undefined | null,
     depth: number,
   ): void;
+  /** Called at the start of each new vnode object */
   onOpenTag(
     name: string,
     hasChildren: boolean,
     isVoid: boolean,
     depth: number,
   ): void;
+  /** Called when attribute parsing is done for the current vnode */
   onOpenTagClose(
     name: string,
     hasAttributes: boolean,
@@ -28,8 +32,11 @@ export interface Renderer {
     hasChildren: boolean,
     depth: number,
   ): void;
+  /** Called when the node is a simple string */
   onTextNode(text: string, depth: number): void;
+  /** Called when all children of the current vnode are parsed */
   onCloseTag(name: string, isVoid: boolean, depth: number): void;
+  /** Called when vnode has it's own html (f.ex. jQuery plugins) */
   onDangerousInnerHTML(html: string): void;
 }
 
