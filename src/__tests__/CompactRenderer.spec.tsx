@@ -1,37 +1,40 @@
-import { h, Component } from "preact";
+import { h, Component, VNode } from "preact";
 import { assert as t } from "chai";
-import { render } from "../renderSync";
+import { createRenderer } from "../renderSync";
 import CompactRenderer from "../CompactRenderer";
-import { renderHelper } from "./StubRenderer";
 
 /* tslint:disable:max-classes-per-file */
 
 describe("CompactRenderer", () => {
-  const renderer = new CompactRenderer();
-  const r = renderHelper(renderer);
+  let render: (node: VNode) => string;
+
+  beforeEach(() => {
+    const renderer = new CompactRenderer();
+    render = createRenderer(renderer);
+  });
 
   it("should render self-closing elements", () => {
-    const res = r(<meta accept="foo" />);
+    const res = render(<meta accept="foo" />);
     t.equal(res, '<meta accept="foo" />');
   });
 
   it("should render div", () => {
-    const res = r(<div />);
+    const res = render(<div />);
     t.equal(res, "<div></div>");
   });
 
   it("should render text children", () => {
-    const res = r(<div>foo</div>);
+    const res = render(<div>foo</div>);
     t.equal(res, "<div>foo</div>");
   });
 
   it("should encode text children", () => {
-    const res = r(<div>{"<foo"}</div>);
+    const res = render(<div>{"<foo"}</div>);
     t.equal(res, "<div>&lt;foo</div>");
   });
 
   it("should render nested elements", () => {
-    const res = r(
+    const res = render(
       <div>
         <div><p>foo</p></div>
       </div>,
@@ -40,7 +43,7 @@ describe("CompactRenderer", () => {
   });
 
   it("should omit newlines in attributes", () => {
-    const res = r(
+    const res = render(
       <div class={`foo\n\tbar\n\tbaz`}>
         <a>a</a>
         <b>b</b>
@@ -52,68 +55,68 @@ describe("CompactRenderer", () => {
   });
 
   it("should escape falsey attributes", () => {
-    const res = r(<div data-a={null} data-b={undefined} data-c={false} />);
+    const res = render(<div data-a={null} data-b={undefined} data-c={false} />);
     t.equal(res, "<div></div>");
 
-    t.equal(r(<div data-foo={0} />), '<div data-foo="0"></div>');
+    t.equal(render(<div data-foo={0} />), '<div data-foo="0"></div>');
   });
 
   it("should collapse collapsible attributes", () => {
-    const res = r(<div class="" style="" data-foo={true} data-bar />);
+    const res = render(<div class="" style="" data-foo={true} data-bar />);
 
     t.equal(res, '<div class="" style="" data-foo data-bar></div>');
   });
 
   it("should omit functions", () => {
     /* tslint:disable-next-line */
-    const res = r(<div data-a={() => {}} data-b={function() {}} />);
+    const res = render(<div data-a={() => {}} data-b={function() {}} />);
     t.equal(res, "<div></div>");
   });
 
   it("should omit key and ref attributes", () => {
-    const res = r(<div key="foo" ref={() => undefined} />);
+    const res = render(<div key="foo" ref={() => undefined} />);
     t.equal(res, "<div></div>");
   });
 
   it("should encode entities", () => {
-    const res = r(<div data-a={'"<>&'}>{'"<>&'}</div>);
+    const res = render(<div data-a={'"<>&'}>{'"<>&'}</div>);
 
     t.equal(res, '<div data-a="&quot;&lt;&gt;&amp;">&quot;&lt;&gt;&amp;</div>');
   });
 
   it("should omit falsey children", () => {
-    const res = r(<div>{null}|{undefined}|{false}</div>);
+    const res = render(<div>{null}|{undefined}|{false}</div>);
     t.equal(res, "<div>||</div>");
   });
 
   it("does not close void elements with closing tags", () => {
-    const res = r(<input><p>Hello World</p></input>);
+    const res = render(<input><p>Hello World</p></input>);
     t.equal(res, "<input /><p>Hello World</p>");
   });
 
   it("should serialize object styles", () => {
-    const res = r(<div style={{ color: "red", border: "none" }} />);
+    const res = render(<div style={{ color: "red", border: "none" }} />);
     t.equal(res, '<div style="color: red; border: none;"></div>');
 
-    const res2 = r(<div style={{}} />);
+    const res2 = render(<div style={{}} />);
     t.equal(res2, '<div style=""></div>');
   });
 
   it("should dangerouslySetInnerHTML", () => {
     const html = { __html: "<span>foo</span>" };
-    const res = r(<div dangerouslySetInnerHTML={html} />);
+    const res = render(<div dangerouslySetInnerHTML={html} />);
     t.equal(res, "<div><span>foo</span></div>");
   });
 
   it("should sort attributes", () => {
-    const res = render(<div style={{}} class="foo" />, renderer, {
+    const res = createRenderer(new CompactRenderer(), {
       sort: true,
-    });
+    })(<div style={{}} class="foo" />);
     t.equal(res, '<div class="foo" style=""></div>');
   });
 
   it("should render SVG elements", () => {
-    const res = r(
+    const res = render(
       <div>
         <svg>
           <image xlinkHref="#" />
@@ -138,21 +141,23 @@ describe("CompactRenderer", () => {
   describe("Functional Components", () => {
     it("should render components", () => {
       const Foo = () => <div>foo</div>;
-      const res = r(<div><Foo /></div>);
+      const res = render(<div><Foo /></div>);
       t.equal(res, "<div><div>foo</div></div>");
     });
 
     it("should shallow render components", () => {
       const Foo = () => <div>foo</div>;
-      const res = render(<div><Foo /></div>, renderer, { shallow: true });
+      const res = createRenderer(new CompactRenderer(), { shallow: true })(
+        <div><Foo /></div>,
+      );
       t.equal(res, "<div><Foo /></div>");
     });
 
     it("should shallow render components with attributes", () => {
       const Foo = (props: { a: string }) => <div>foo {props.a}</div>;
-      const res = render(<div><Foo a="bar" /></div>, renderer, {
+      const res = createRenderer(new CompactRenderer(), {
         shallow: true,
-      });
+      })(<div><Foo a="bar" /></div>);
       t.equal(res, '<div><Foo a="bar" /></div>');
     });
 
@@ -170,16 +175,22 @@ describe("CompactRenderer", () => {
       const Test: TestComponent = props => <div {...props} />;
       Test.defaultProps = { foo: "default foo", bar: "default bar" };
 
-      t.equal(r(<Test />), '<div foo="default foo" bar="default bar"></div>');
-      t.equal(r(<Test bar="b" />), '<div foo="default foo" bar="b"></div>');
-      t.equal(r(<Test foo="a" bar="b" />), '<div foo="a" bar="b"></div>');
+      t.equal(
+        render(<Test />),
+        '<div foo="default foo" bar="default bar"></div>',
+      );
+      t.equal(
+        render(<Test bar="b" />),
+        '<div foo="default foo" bar="b"></div>',
+      );
+      t.equal(render(<Test foo="a" bar="b" />), '<div foo="a" bar="b"></div>');
 
       const Test2: TestComponent = props => <div {...props} />;
       Test2.defaultProps = undefined;
 
-      t.equal(r(<Test2 />), "<div></div>");
-      t.equal(r(<Test2 bar="b" />), '<div bar="b"></div>');
-      t.equal(r(<Test2 foo="a" bar="b" />), '<div foo="a" bar="b"></div>');
+      t.equal(render(<Test2 />), "<div></div>");
+      t.equal(render(<Test2 bar="b" />), '<div bar="b"></div>');
+      t.equal(render(<Test2 foo="a" bar="b" />), '<div foo="a" bar="b"></div>');
     });
   });
 
@@ -197,7 +208,7 @@ describe("CompactRenderer", () => {
       }
 
       t.equal(
-        r(<Test foo="bar">content</Test>),
+        render(<Test foo="bar">content</Test>),
         '<div class="bar">content</div>',
       );
     });
@@ -214,7 +225,7 @@ describe("CompactRenderer", () => {
       }
 
       t.equal(
-        r(<Test>content</Test>),
+        render(<Test>content</Test>),
         '<div class="default foo">content</div>',
       );
     });
@@ -230,7 +241,7 @@ describe("CompactRenderer", () => {
       }
 
       t.equal(
-        r(<Test foo="bar">content</Test>),
+        render(<Test foo="bar">content</Test>),
         '<div class="nope">content</div>',
       );
     });
@@ -257,7 +268,7 @@ describe("CompactRenderer", () => {
       }
 
       t.equal(
-        r(<Test foo="bar">content</Test>),
+        render(<Test foo="bar">content</Test>),
         '<div class="nope">world</div>',
       );
     });

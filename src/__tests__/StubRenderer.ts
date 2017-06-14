@@ -1,13 +1,14 @@
 import * as sinon from "sinon";
-import { Renderer } from "../Renderer";
-import { render } from "../renderSync";
+import { createRenderer, Renderer, Options } from "../renderSync";
 
 export default class StubRenderer implements Renderer {
+  html: string = "";
   onProp = sinon.spy();
   onOpenTag = sinon.spy();
   onOpenTagClose = sinon.spy();
   onTextNode = sinon.spy();
   onCloseTag = sinon.spy();
+  onDangerousInnerHTML = sinon.spy();
 
   reset() {
     this.onCloseTag.reset();
@@ -15,6 +16,3 @@ export default class StubRenderer implements Renderer {
     this.onProp.reset();
   }
 }
-
-export const renderHelper = (renderer: Renderer) => (component: JSX.Element) =>
-  render(component, renderer);
