@@ -1,17 +1,24 @@
 import { padStart } from "vdom-utils";
-import { Renderer } from "./Renderer";
+import { Renderer } from "./renderSync";
 
 export default class CompactRenderer implements Renderer {
+  html: string = "";
+
   onProp(
     name: string,
     value: string | boolean | undefined | null,
     depth: number,
-  ): string {
+  ) {
     if (value === true) {
-      return " " + name;
+      this.html += " " + name;
+      return;
     }
 
-    return " " + name + '="' + value + '"';
+    this.html += " " + name + '="' + value + '"';
+  }
+
+  reset() {
+    this.html = "";
   }
 
   onOpenTag(
@@ -19,13 +26,11 @@ export default class CompactRenderer implements Renderer {
     hasAttributes: boolean,
     isVoid: boolean,
     depth: number,
-  ): string {
-    let data = "<" + name;
+  ) {
+    this.html += "<" + name;
     if (!hasAttributes) {
-      data += isVoid ? " />" : "";
+      this.html += isVoid ? " />" : "";
     }
-
-    return data;
   }
 
   onOpenTagClose(
@@ -34,26 +39,25 @@ export default class CompactRenderer implements Renderer {
     isVoid: boolean,
     hasChildren: boolean,
     depth: number,
-  ): string {
-    let data = "";
+  ) {
     if (hasAttributes) {
-      data += isVoid ? " />" : ">";
+      this.html += isVoid ? " />" : ">";
     } else if (!isVoid) {
-      data += ">";
+      this.html += ">";
     }
-
-    return data;
   }
 
-  onTextNode(text: string, depth: number): string {
-    return text;
+  onTextNode(text: string, depth: number) {
+    this.html += text;
   }
 
-  onCloseTag(name: string, isVoid: boolean, depth: number): string {
+  onCloseTag(name: string, isVoid: boolean, depth: number) {
     if (!isVoid) {
-      return "</" + name + ">";
+      this.html += "</" + name + ">";
     }
+  }
 
-    return "";
+  onDangerousInnerHTML(html: string) {
+    this.html += html;
   }
 }

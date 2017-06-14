@@ -6,7 +6,32 @@ import {
   jsToCss,
 } from "vdom-utils";
 import { getComponentName, getNodeProps } from "./utils";
-import { Renderer } from "./Renderer";
+
+export interface Renderer {
+  html: string;
+  reset(): void;
+  onProp(
+    name: string,
+    value: string | boolean | undefined | null,
+    depth: number,
+  ): void;
+  onOpenTag(
+    name: string,
+    hasChildren: boolean,
+    isVoid: boolean,
+    depth: number,
+  ): void;
+  onOpenTagClose(
+    name: string,
+    hasAttributes: boolean,
+    isVoid: boolean,
+    hasChildren: boolean,
+    depth: number,
+  ): void;
+  onTextNode(text: string, depth: number): void;
+  onCloseTag(name: string, isVoid: boolean, depth: number): void;
+  onDangerousInnerHTML(html: string): void;
+}
 
 export interface Options {
   sort: boolean;
@@ -20,30 +45,35 @@ const defaultOpts: Options = {
   depth: 0,
 };
 
-export function render(
-  vnode: VNode,
+export const createRenderer = (
   renderer: Renderer,
   options: Partial<Options> = {},
-) {
-  return renderToString(vnode, renderer, {
+) => {
+  const opts: Options = {
     ...defaultOpts,
     ...options,
-  });
-}
+  };
+
+  return (vnode: VNode) => {
+    renderer.reset();
+    renderToString(vnode, renderer, opts);
+    return renderer.html;
+  };
+};
 
 export function renderToString(
   vnode: VNode | string | undefined,
   renderer: Renderer,
   options: Options,
-): string {
-  let html = "";
+): void {
   if (vnode === undefined) {
-    return html;
+    return;
   }
 
   // Text node
   if (typeof vnode === "string") {
-    return renderer.onTextNode(encode(vnode), options.depth);
+    renderer.onTextNode(encode(vnode), options.depth);
+    return;
   }
 
   const { depth, shallow, sort } = options;
@@ -51,9 +81,7 @@ export function renderToString(
   let { nodeName, children } = vnode;
 
   // Component
-  let isComponent = false;
   if (typeof nodeName === "function") {
-    isComponent = true;
     if (shallow) {
       nodeName = getComponentName(nodeName);
     } else {
@@ -75,22 +103,23 @@ export function renderToString(
         }
         rendered = c.render(props, undefined);
       }
-      return renderToString(rendered, renderer, options);
+      renderToString(rendered, renderer, options);
+      return;
     }
   }
 
   const hasAttributes = attributes !== undefined;
-  const isVoid =
-    VOID_ELEMENTS.indexOf(nodeName as string) > -1 ||
-    (isComponent && children.length === 0);
-
   if (hasAttributes && vnode.attributes.children !== undefined) {
     children = vnode.attributes.children;
   }
 
-  html += renderer.onOpenTag(nodeName as string, hasAttributes, isVoid, depth);
+  const isVoid =
+    VOID_ELEMENTS.includes(nodeName as string) ||
+    (shallow && children.length === 0);
 
-  let dangerHtml;
+  renderer.onOpenTag(nodeName as string, hasAttributes, isVoid, depth);
+
+  let dangerHtml: string | undefined;
   if (hasAttributes) {
     let keys = Object.keys(attributes);
     if (sort) {
@@ -106,10 +135,11 @@ export function renderToString(
         value === undefined ||
         value === null ||
         value === false ||
+        name === "children" ||
+        name === "key" ||
+        name === "ref" ||
         typeof value === "function"
       ) {
-        continue;
-      } else if (name === "children" || name === "key" || name === "ref") {
         continue;
       } else if (name === "className") {
         if (attributes.class !== undefined) {
@@ -129,24 +159,24 @@ export function renderToString(
           }
         }
         value = styles;
-      }
-
-      if (name === "dangerouslySetInnerHTML") {
+      } else if (name === "dangerouslySetInnerHTML") {
         dangerHtml = value.__html;
-      } else {
-        if (name.startsWith("xlink")) {
-          name = name.toLowerCase().replace(/^xlink\:?(.+)/, "xlink:$1");
-        }
-
-        if (typeof value === "string") {
-          value = encode(value);
-        }
-        html += renderer.onProp(name, value, depth);
+        continue;
       }
+
+      if (name.startsWith("xlink")) {
+        name = name.toLowerCase().replace(/^xlink\:?(.+)/, "xlink:$1");
+      }
+
+      if (typeof value === "string") {
+        value = encode(value);
+      }
+
+      renderer.onProp(name, value, depth);
     }
   }
 
-  html += renderer.onOpenTagClose(
+  renderer.onOpenTagClose(
     nodeName as string,
     hasAttributes,
     isVoid,
@@ -155,17 +185,16 @@ export function renderToString(
   );
 
   if (dangerHtml !== undefined) {
-    html += dangerHtml;
-  }
-
-  const childrenLen = children.length;
-  if (childrenLen > 0) {
-    for (var j = 0; j < childrenLen; j++) {
-      options.depth += 1;
-      html += renderToString(children[j], renderer, options);
+    renderer.onDangerousInnerHTML(dangerHtml);
+  } else {
+    const childrenLen = children.length;
+    if (childrenLen > 0) {
+      for (var j = 0; j < childrenLen; j++) {
+        options.depth += 1;
+        renderToString(children[j], renderer, options);
+      }
     }
   }
 
-  html += renderer.onCloseTag(nodeName as string, isVoid, depth);
-  return html;
+  renderer.onCloseTag(nodeName as string, isVoid, depth);
 }

@@ -1,12 +1,15 @@
-import { h } from "preact";
+import { h, VNode } from "preact";
 import { assert as t } from "chai";
-import { render } from "../renderSync";
+import { createRenderer } from "../renderSync";
 import JsxRenderer from "../JsxRenderer";
-import { renderHelper } from "./StubRenderer";
 
 describe("JsxRenderer", () => {
-  const renderer = new JsxRenderer();
-  const r = renderHelper(renderer);
+  let r: (vnode: VNode) => string;
+
+  beforeEach(() => {
+    const renderer = new JsxRenderer();
+    r = createRenderer(renderer);
+  });
 
   it("should render self-closing elements", () => {
     const res = r(<meta accept="foo" />);
@@ -43,13 +46,17 @@ describe("JsxRenderer", () => {
 
   it("should shallow render components", () => {
     const Foo = () => <div>foo</div>;
-    const res = render(<div><Foo /></div>, renderer, { shallow: true });
+    const res = createRenderer(new JsxRenderer(), { shallow: true })(
+      <div><Foo /></div>,
+    );
     t.equal(res, "<div>\n  <Foo />\n</div>\n");
   });
 
   it("should shallow render components with attributes", () => {
     const Foo = (props: { a: string }) => <div>foo {props.a}</div>;
-    const res = render(<div><Foo a="bar" /></div>, renderer, { shallow: true });
+    const res = createRenderer(new JsxRenderer(), { shallow: true })(
+      <div><Foo a="bar" /></div>,
+    );
     t.equal(res, '<div>\n  <Foo\n    a="bar"\n  />\n</div>\n');
   });
 });

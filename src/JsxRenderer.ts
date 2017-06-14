@@ -1,5 +1,5 @@
 import { padStart } from "vdom-utils";
-import { Renderer } from "./Renderer";
+import { Renderer } from "./renderSync";
 
 export interface Options {
   indent: number;
@@ -7,15 +7,20 @@ export interface Options {
 
 export default class JsxRenderer implements Renderer {
   indent: number;
+  html: string = "";
 
   constructor(options: Partial<Options> = {}) {
     const defaultOpts: Options = { indent: 2 };
     Object.assign(this, defaultOpts, options);
   }
 
-  onProp(name: string, value: string, depth: number): string {
+  reset() {
+    this.html = "";
+  }
+
+  onProp(name: string, value: string, depth: number) {
     const indent = (depth + 1) * this.indent;
-    return "\n" + padStart(name + '="' + value + '"', indent);
+    this.html += "\n" + padStart(name + '="' + value + '"', indent);
   }
 
   onOpenTag(
@@ -23,13 +28,11 @@ export default class JsxRenderer implements Renderer {
     hasAttributes: boolean,
     isVoid: boolean,
     depth: number,
-  ): string {
-    let data = padStart("<" + name, depth * this.indent);
+  ) {
+    this.html += padStart("<" + name, depth * this.indent);
     if (!hasAttributes) {
-      data += isVoid ? " />\n" : "";
+      this.html += isVoid ? " />\n" : "";
     }
-
-    return data;
   }
 
   onOpenTagClose(
@@ -38,30 +41,29 @@ export default class JsxRenderer implements Renderer {
     isVoid: boolean,
     hasChildren: boolean,
     depth: number,
-  ): string {
-    let data = "";
+  ) {
     if (hasAttributes) {
-      data += isVoid ? "\n" + padStart("/>\n", depth * this.indent) : "\n";
+      this.html += isVoid ? "\n" + padStart("/>\n", depth * this.indent) : "\n";
     } else if (!isVoid) {
-      data += ">";
+      this.html += ">";
     }
 
     if (hasChildren) {
-      data += "\n";
+      this.html += "\n";
     }
-
-    return data;
   }
 
-  onTextNode(text: string, depth: number): string {
-    return padStart(text + "\n", depth * this.indent);
+  onTextNode(text: string, depth: number) {
+    this.html += padStart(text + "\n", depth * this.indent);
   }
 
-  onCloseTag(name: string, isVoid: boolean, depth: number): string {
+  onCloseTag(name: string, isVoid: boolean, depth: number) {
     if (!isVoid) {
-      return padStart("</" + name + ">", depth * this.indent) + "\n";
+      this.html += padStart("</" + name + ">", depth * this.indent) + "\n";
     }
+  }
 
-    return "";
+  onDangerousInnerHTML(html: string) {
+    this.html += html;
   }
 }
