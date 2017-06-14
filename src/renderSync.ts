@@ -8,7 +8,8 @@ import {
 import { getComponentName, getNodeProps } from "./utils";
 
 export interface Renderer {
-  html: string;
+  /** Will be returned when rendering is completed */
+  output: string;
   /** Reset the current instance */
   reset(): void;
   /** Called when an attribute is parsed */
@@ -68,7 +69,7 @@ export const createRenderer = (
   return (vnode: VNode) => {
     renderer.reset();
     renderToString(vnode, renderer, opts.depth, opts as Options);
-    return renderer.html;
+    return renderer.output;
   };
 };
 

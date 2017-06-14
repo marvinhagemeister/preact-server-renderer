@@ -2,7 +2,7 @@ import { padStart } from "vdom-utils";
 import { Renderer } from "../renderSync";
 
 export default class CompactRenderer implements Renderer {
-  html: string = "";
+  output: string = "";
 
   onProp(
     name: string,
@@ -10,15 +10,15 @@ export default class CompactRenderer implements Renderer {
     depth: number,
   ) {
     if (value === true) {
-      this.html += " " + name;
+      this.output += " " + name;
       return;
     }
 
-    this.html += " " + name + '="' + value + '"';
+    this.output += " " + name + '="' + value + '"';
   }
 
   reset() {
-    this.html = "";
+    this.output = "";
   }
 
   onOpenTag(
@@ -27,9 +27,9 @@ export default class CompactRenderer implements Renderer {
     isVoid: boolean,
     depth: number,
   ) {
-    this.html += "<" + name;
+    this.output += "<" + name;
     if (!hasAttributes) {
-      this.html += isVoid ? " />" : "";
+      this.output += isVoid ? " />" : "";
     }
   }
 
@@ -41,23 +41,23 @@ export default class CompactRenderer implements Renderer {
     depth: number,
   ) {
     if (hasAttributes) {
-      this.html += isVoid ? " />" : ">";
+      this.output += isVoid ? " />" : ">";
     } else if (!isVoid) {
-      this.html += ">";
+      this.output += ">";
     }
   }
 
   onTextNode(text: string, depth: number) {
-    this.html += text;
+    this.output += text;
   }
 
   onCloseTag(name: string, isVoid: boolean, depth: number) {
     if (!isVoid) {
-      this.html += "</" + name + ">";
+      this.output += "</" + name + ">";
     }
   }
 
   onDangerousInnerHTML(html: string) {
-    this.html += html;
+    this.output += html;
   }
 }

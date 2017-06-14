@@ -2,7 +2,7 @@ import * as sinon from "sinon";
 import { createRenderer, Renderer, Options } from "../renderSync";
 
 export default class StubRenderer implements Renderer {
-  html: string = "";
+  output: string = "";
   onProp = sinon.spy();
   onOpenTag = sinon.spy();
   onOpenTagClose = sinon.spy();
