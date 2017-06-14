@@ -1,3 +1,3 @@
-# TypeScript Starter
+# Preact Server Renderer
 
-Slim Boilerplate for TypeScript based projects.
+TODO
