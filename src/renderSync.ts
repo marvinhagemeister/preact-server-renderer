@@ -54,9 +54,13 @@ export const createRenderer = (
     ...options,
   };
 
+  if (opts.depth === undefined) {
+    opts.depth = defaultOpts.depth;
+  }
+
   return (vnode: VNode) => {
     renderer.reset();
-    renderToString(vnode, renderer, opts as Options);
+    renderToString(vnode, renderer, opts.depth, opts as Options);
     return renderer.html;
   };
 };
@@ -64,6 +68,7 @@ export const createRenderer = (
 export function renderToString(
   vnode: VNode | string | undefined,
   renderer: Renderer,
+  depth: number,
   options: Options,
 ): void {
   if (vnode === undefined) {
@@ -72,11 +77,11 @@ export function renderToString(
 
   // Text node
   if (typeof vnode === "string") {
-    renderer.onTextNode(encode(vnode), options.depth);
+    renderer.onTextNode(encode(vnode), depth);
     return;
   }
 
-  const { depth, shallow, sort } = options;
+  const { shallow, sort } = options;
   const { attributes } = vnode;
   let { nodeName, children } = vnode;
 
@@ -103,7 +108,7 @@ export function renderToString(
         }
         rendered = c.render(props, undefined);
       }
-      renderToString(rendered, renderer, options);
+      renderToString(rendered, renderer, depth, options);
       return;
     }
   }
@@ -190,8 +195,7 @@ export function renderToString(
     const childrenLen = children.length;
     if (childrenLen > 0) {
       for (var j = 0; j < childrenLen; j++) {
-        options.depth += 1;
-        renderToString(children[j], renderer, options);
+        renderToString(children[j], renderer, depth + 1, options);
       }
     }
   }
