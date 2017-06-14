@@ -96,8 +96,8 @@ for the specific parsing steps. They simply need to adhere to the following
 interface and that's it!
 
 ```ts
-interface Renderer {
-  output: string;
+interface Renderer<T> {
+  output: T; // Can be anything you want
   /** Reset the current instance */
   reset(): void;
   /** Called when an attribute is parsed */
