@@ -43,7 +43,8 @@ export default class JsxRenderer implements Renderer {
     depth: number,
   ) {
     if (hasAttributes) {
-      this.html += isVoid ? "\n" + padStart("/>\n", depth * this.indent) : "\n";
+      const closer = isVoid ? "/>\n" : ">";
+      this.html += "\n" + padStart(closer, depth * this.indent);
     } else if (!isVoid) {
       this.html += ">";
     }

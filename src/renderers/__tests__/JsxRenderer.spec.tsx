@@ -36,6 +36,26 @@ describe("JsxRenderer", () => {
       res,
       "<div>\n  <div>\n    <p>\n      foo\n    </p>\n  </div>\n</div>\n",
     );
+
+    const res2 = r(
+      <div>
+        <h1>Hello World!</h1>
+        content
+      </div>,
+    );
+
+    t.equal(
+      res2,
+      "<div>\n  <h1>\n    Hello World!\n  </h1>\n  content\n</div>\n",
+    );
+  });
+
+  it("should serialize object styles", () => {
+    const res = r(<div style={{ color: "red", border: "none" }} />);
+    t.equal(res, '<div\n  style="color: red; border: none;"\n></div>\n');
+
+    const res2 = r(<div style={{}} />);
+    t.equal(res2, '<div\n  style=""\n></div>\n');
   });
 
   it("should render components", () => {
