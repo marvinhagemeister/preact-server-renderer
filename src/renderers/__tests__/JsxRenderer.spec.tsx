@@ -1,6 +1,6 @@
 import { h, VNode } from "preact";
 import { assert as t } from "chai";
-import { createRenderer } from "../renderSync";
+import { createRenderer } from "../../renderSync";
 import JsxRenderer from "../JsxRenderer";
 
 describe("JsxRenderer", () => {
