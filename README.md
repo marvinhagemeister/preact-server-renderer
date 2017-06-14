@@ -1,9 +1,12 @@
 # Preact Server Renderer
 
-`preact-server-render` is similar to `preact-render-to-string`by @developit,
-but with pluggable formatters. The underlying DFS algorithm is the same,
-so there aren't any performance differences, only the jsx renderer is a bit
-faster here.
+`preact-server-render` is similar to [preact-render-to-string](https://github.com/developit/preact-render-to-string)
+by [@developit](https://github.com/developit/) (author of preact),
+but with pluggable formatters. This means you can easily tailer the
+output to your needs, without any overhead. Wether you have a
+snapshot renderer, or a custom format in mind. Performance wise,
+both libraries are equal, only the jsx renderer is a tiny bit faster
+here.
 
 ## Installation
 
@@ -33,8 +36,8 @@ const renderJsx = createRenderer(new JsxRenderer());
 const html2 = renderJsx(<div></div>);
 
 // shallow rendering
-const render3 = createRenderer(new CompactRenderer(), { shallow: true });
-const html3 = render3(<div></div>);
+const shallow = createRenderer(new CompactRenderer(), { shallow: true });
+const html3 = shallow(<div></div>);
 ```
 
 ### CompactRenderer
