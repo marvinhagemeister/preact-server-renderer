@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "author": "Marvin Hagemeister <marvin@marvinhagemeister.de>",
   "license": "MIT",
-  "typings": "index.d.ts",
+  "typings": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git@github.com:marvinhagemeister/preact-server-renderer.git"
