@@ -83,7 +83,7 @@ Output:
 
 ```txt
 <div
-   class="foo"
+  class="foo"
 >
   <h1>
     Hello
@@ -101,14 +101,17 @@ interface and that's it!
 ```ts
 interface Renderer<T> {
   output: T; // Can be anything you want
+  
   /** Reset the current instance */
   reset(): void;
+  
   /** Called when an attribute is parsed */
   onProp(
     name: string,
     value: string | boolean | undefined | null,
     depth: number,
   ): void;
+  
   /** Called at the start of each new vnode object */
   onOpenTag(
     name: string,
@@ -116,6 +119,7 @@ interface Renderer<T> {
     isVoid: boolean,
     depth: number,
   ): void;
+  
   /** Called when attribute parsing is done for the current vnode */
   onOpenTagClose(
     name: string,
@@ -124,10 +128,13 @@ interface Renderer<T> {
     hasChildren: boolean,
     depth: number,
   ): void;
+  
   /** Called when the node is a simple string */
   onTextNode(text: string, depth: number): void;
+  
   /** Called when all children of the current vnode are parsed */
   onCloseTag(name: string, isVoid: boolean, depth: number): void;
+  
   /** Called when vnode has it's own html (f.ex. jQuery plugins) */
   onDangerousInnerHTML(html: string): void;
 }
