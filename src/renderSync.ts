@@ -1,10 +1,5 @@
 import { VNode } from "preact";
-import {
-  escapeAttr as encode,
-  VOID_ELEMENTS,
-  padStart,
-  jsToCss,
-} from "vdom-utils";
+import { escape, VOID_ELEMENTS, padStart, jsToCss } from "vdom-utils";
 import { getComponentName, getNodeProps } from "./utils";
 
 export interface Renderer<T> {
@@ -68,7 +63,7 @@ export const createRenderer = <T, R extends Renderer<T>>(
 
   return (vnode: VNode): T => {
     renderer.reset();
-    walkTree(vnode, renderer, opts.depth, opts as Options);
+    walkTree(vnode, renderer, opts.depth as number, opts as Options);
     return renderer.output;
   };
 };
@@ -85,7 +80,7 @@ export function walkTree<T, R extends Renderer<T>>(
 
   // Text node
   if (typeof vnode === "string") {
-    renderer.onTextNode(encode(vnode), depth);
+    renderer.onTextNode(escape(vnode), depth);
     return;
   }
 
@@ -127,8 +122,7 @@ export function walkTree<T, R extends Renderer<T>>(
   }
 
   const isVoid =
-    VOID_ELEMENTS.includes(nodeName as string) ||
-    (shallow && children.length === 0);
+    VOID_ELEMENTS.has(nodeName as string) || (shallow && children.length === 0);
 
   renderer.onOpenTag(nodeName as string, hasAttributes, isVoid, depth);
 
@@ -166,7 +160,7 @@ export function walkTree<T, R extends Renderer<T>>(
         for (var k = 0; k < styleLen; k++) {
           const prop = props[k];
           styles +=
-            encode(jsToCss(prop)) + ": " + encode("" + value[prop]) + ";";
+            escape(jsToCss(prop)) + ": " + escape("" + value[prop]) + ";";
           if (k !== styleLen - 1) {
             styles += " ";
           }
@@ -182,7 +176,7 @@ export function walkTree<T, R extends Renderer<T>>(
       }
 
       if (typeof value === "string") {
-        value = encode(value);
+        value = escape(value);
       }
 
       renderer.onProp(name, value, depth);
