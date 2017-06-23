@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- minor performance improvement when rendering large amounts of void elements
+
 ## 0.2.0
 
 - **breaking:** rename renderer `html` propterty to `output`
