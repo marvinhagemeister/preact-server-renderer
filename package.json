@@ -23,32 +23,35 @@
     "prepublish": "npm run lint && npm t && npm run build",
     "precommit": "lint-staged"
   },
+  "peerDependencies": {
+    "preact": "*"
+  },
   "dependencies": {
-    "@types/node": "^8.0.1",
-    "preact": "^8.1.0",
-    "vdom-utils": "^0.2.0"
+    "@types/node": "^8.0.26",
+    "vdom-utils": "^0.3.1"
   },
   "devDependencies": {
     "@types/benchmark": "^1.0.30",
-    "@types/chai": "^4.0.0",
+    "@types/chai": "^4.0.4",
     "@types/chalk": "^0.4.31",
-    "@types/mocha": "^2.2.41",
-    "@types/sinon": "^2.3.1",
+    "@types/mocha": "^2.2.42",
+    "@types/sinon": "^2.3.3",
     "benchmark": "^2.1.4",
-    "chai": "^4.0.2",
-    "chalk": "^1.1.3",
-    "husky": "^0.13.4",
-    "lint-staged": "^4.0.0",
-    "mocha": "^3.3.0",
-    "nyc": "^11.0.2",
+    "chai": "^4.1.2",
+    "chalk": "^2.1.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.0.4",
+    "mocha": "^3.5.0",
+    "nyc": "^11.1.0",
+    "preact": "^8.2.5",
     "preact-render-to-string": "^3.6.3",
-    "prettier": "^1.4.4",
+    "prettier": "^1.6.1",
     "rimraf": "^2.6.1",
-    "sinon": "^2.3.5",
-    "ts-node": "^3.1.0",
-    "tslint": "^5.1.0",
-    "tslint-config-sevenval": "^0.6.1",
-    "typescript": "2.3.4"
+    "sinon": "^3.2.1",
+    "ts-node": "^3.3.0",
+    "tslint": "^5.7.0",
+    "tslint-config-sevenval": "^0.6.3",
+    "typescript": "^2.5.2"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -83,8 +86,5 @@
       "lcovonly"
     ],
     "all": true
-  },
-  "peerDependencies": {
-    "preact": "^8.1.0"
   }
 }
