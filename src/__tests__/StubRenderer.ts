@@ -1,18 +1,17 @@
-import * as sinon from "sinon";
 import { createRenderer, Renderer, Options } from "../renderSync";
 
 export default class StubRenderer implements Renderer<string> {
   output: string = "";
-  onProp = sinon.spy();
-  onOpenTag = sinon.spy();
-  onOpenTagClose = sinon.spy();
-  onTextNode = sinon.spy();
-  onCloseTag = sinon.spy();
-  onDangerousInnerHTML = sinon.spy();
+  onProp = jest.fn();
+  onOpenTag = jest.fn();
+  onOpenTagClose = jest.fn();
+  onTextNode = jest.fn();
+  onCloseTag = jest.fn();
+  onDangerousInnerHTML = jest.fn();
 
   reset() {
-    this.onCloseTag.reset();
-    this.onOpenTag.reset();
-    this.onProp.reset();
+    this.onCloseTag.mockReset();
+    this.onOpenTag.mockReset();
+    this.onProp.mockReset();
   }
 }
