@@ -1,7 +1,7 @@
 import { h } from "preact";
 import { createRenderer, CompactRenderer } from "../src/index";
 import { view, view2 } from "./components";
-import { createBenchmark, logCycle, logWinner } from "./helpers";
+import { createBenchmark } from "./helpers";
 
 /* tslint:disable:no-var-requires no-console */
 const renderToString = require("preact-render-to-string");

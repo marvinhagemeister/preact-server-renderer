@@ -1,9 +1,9 @@
 import { h } from "preact";
 import { createRenderer, JsxRenderer } from "../src/index";
 import { view, viewSvg } from "./components";
-import { createBenchmark, logCycle, logWinner } from "./helpers";
+import { createBenchmark } from "./helpers";
 
-/* tslint:disable:no-var-requires no-console */
+/* tslint:disable:no-var-requires no-console no-submodule-imports */
 const renderToString = require("preact-render-to-string/jsx");
 
 const renderer = new JsxRenderer();
