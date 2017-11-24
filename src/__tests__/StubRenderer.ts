@@ -14,4 +14,8 @@ export default class StubRenderer implements Renderer<string> {
     this.onOpenTag.mockReset();
     this.onProp.mockReset();
   }
+
+  done() {
+    /* noop */
+  }
 }

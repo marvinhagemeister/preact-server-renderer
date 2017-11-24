@@ -1,4 +1,4 @@
-import { ComponentConstructor, VNode } from "preact";
+import { ComponentConstructor, VNode, FunctionalComponent } from "preact";
 
 export function getComponentName(component: ComponentConstructor<any, any>) {
   return component.name;
@@ -17,4 +17,8 @@ export function getNodeProps(vnode: VNode) {
   }
 
   return props;
+}
+
+export function isFunctional(node: any): node is FunctionalComponent<any> {
+  return !node.prototype || typeof node.prototype.render !== "function";
 }

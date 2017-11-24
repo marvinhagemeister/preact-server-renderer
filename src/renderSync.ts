@@ -1,12 +1,12 @@
 import { VNode } from "preact";
 import { escape, VOID_ELEMENTS, padStart, jsToCss } from "vdom-utils";
-import { getComponentName, getNodeProps } from "./utils";
+import { getComponentName, getNodeProps, isFunctional } from "./utils";
 
 export interface Renderer<T> {
-  /** Will be returned when rendering is completed */
-  output: T;
   /** Reset the current instance */
   reset(): void;
+  /** Will be returned when rendering is completed */
+  done(): T;
   /** Called when an attribute is parsed */
   onProp(
     name: string,
@@ -48,7 +48,7 @@ const defaultOpts: Options = {
   depth: 0,
 };
 
-export const createRenderer = <T, R extends Renderer<T>>(
+export const createRenderer = <T, R extends Renderer<T> = any>(
   renderer: R,
   options: Partial<Options> = {},
 ) => {
@@ -63,23 +63,20 @@ export const createRenderer = <T, R extends Renderer<T>>(
 
   return (vnode: VNode): T => {
     renderer.reset();
-    walkTree(vnode, renderer, opts.depth as number, opts as Options);
-    return renderer.output;
+    walkTree(vnode, renderer, opts.depth, opts);
+    return renderer.done();
   };
 };
 
 export function walkTree<T, R extends Renderer<T>>(
-  vnode: VNode | string | undefined,
+  vnode: VNode | string | undefined | null,
   renderer: R,
   depth: number,
   options: Options,
 ): void {
-  if (vnode === undefined) {
+  if (vnode === undefined || vnode === null) {
     return;
-  }
-
-  // Text node
-  if (typeof vnode === "string") {
+  } else if (typeof vnode === "string") {
     renderer.onTextNode(escape(vnode), depth);
     return;
   }
@@ -97,17 +94,14 @@ export function walkTree<T, R extends Renderer<T>>(
       let rendered;
       const props = getNodeProps(vnode);
 
-      if (
-        !nodeName.prototype ||
-        typeof nodeName.prototype.render !== "function"
-      ) {
-        rendered = (nodeName as any)(props, undefined);
+      if (isFunctional(nodeName)) {
+        rendered = nodeName(props, undefined);
       } else {
         // Class components
         const c = new nodeName(props, undefined);
 
-        if ((c as any).componentWillMount !== undefined) {
-          (c as any).componentWillMount();
+        if (c.componentWillMount !== undefined) {
+          c.componentWillMount();
         }
         rendered = c.render(props, undefined);
       }
@@ -122,9 +116,9 @@ export function walkTree<T, R extends Renderer<T>>(
   }
 
   const isVoid =
-    VOID_ELEMENTS.has(nodeName as string) || (shallow && children.length === 0);
+    VOID_ELEMENTS.has(nodeName) || (shallow && children.length === 0);
 
-  renderer.onOpenTag(nodeName as string, hasAttributes, isVoid, depth);
+  renderer.onOpenTag(nodeName, hasAttributes, isVoid, depth);
 
   let dangerHtml: string | undefined;
   if (hasAttributes) {
@@ -184,7 +178,7 @@ export function walkTree<T, R extends Renderer<T>>(
   }
 
   renderer.onOpenTagClose(
-    nodeName as string,
+    nodeName,
     hasAttributes,
     isVoid,
     children.length > 0,

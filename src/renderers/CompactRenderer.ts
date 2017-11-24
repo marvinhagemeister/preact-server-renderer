@@ -17,6 +17,10 @@ export default class CompactRenderer implements Renderer<string> {
     this.output += " " + name + '="' + value + '"';
   }
 
+  done() {
+    return this.output;
+  }
+
   reset() {
     this.output = "";
   }

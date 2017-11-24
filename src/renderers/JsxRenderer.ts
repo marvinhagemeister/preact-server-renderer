@@ -18,6 +18,10 @@ export default class JsxRenderer implements Renderer<string> {
     this.output = "";
   }
 
+  done() {
+    return this.output;
+  }
+
   onProp(name: string, value: string, depth: number) {
     const indent = (depth + 1) * this.indent;
     this.output += "\n" + padStart(name + '="' + value + '"', indent);
