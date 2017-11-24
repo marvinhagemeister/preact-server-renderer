@@ -8,7 +8,7 @@
   "typings": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git@github.com:marvinhagemeister/preact-server-renderer.git"
+    "url": "https://github.com/marvinhagemeister/preact-server-renderer.git"
   },
   "scripts": {
     "bench": "ts-node benchmark/index.ts",
@@ -16,11 +16,12 @@
     "lint": "tslint 'src/**/*.ts'",
     "watch": "tsc -w",
     "build": "npm run cleanup && tsc",
-    "test": "mocha --watch-extensions tsx,ts  --compilers ts:ts-node/register 'src/**/__tests__/*.spec.*'",
+    "test":
+      "mocha --watch-extensions tsx,ts  --compilers ts:ts-node/register 'src/**/__tests__/*.spec.*'",
     "test-watch": "npm t -- -w -R min",
     "coverage": "nyc npm t",
     "format": "prettier --trailing-comma=all --write 'src/**/*.{ts,tsx}'",
-    "prepublish": "npm run lint && npm t && npm run build",
+    "prepublishOnly": "npm run lint && npm t && npm run build",
     "precommit": "lint-staged"
   },
   "peerDependencies": {
@@ -31,14 +32,11 @@
     "vdom-utils": "^0.3.1"
   },
   "devDependencies": {
-    "@types/benchmark": "^1.0.30",
     "@types/chai": "^4.0.4",
-    "@types/chalk": "^0.4.31",
     "@types/mocha": "^2.2.42",
     "@types/sinon": "^2.3.3",
-    "benchmark": "^2.1.4",
+    "benchmarkjs-pretty": "^2.0.0",
     "chai": "^4.1.2",
-    "chalk": "^2.1.0",
     "husky": "^0.14.3",
     "lint-staged": "^4.0.4",
     "mocha": "^3.5.0",
@@ -61,10 +59,7 @@
     ]
   },
   "nyc": {
-    "include": [
-      "src/*.ts",
-      "src/**/*.ts"
-    ],
+    "include": ["src/*.ts", "src/**/*.ts"],
     "exclude": [
       "typings",
       "node_modules/",
@@ -72,19 +67,9 @@
       "__tests__/**",
       "**/*.d.ts"
     ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "json",
-      "html",
-      "text",
-      "text-summary",
-      "lcovonly"
-    ],
+    "extension": [".ts"],
+    "require": ["ts-node/register"],
+    "reporter": ["json", "html", "text", "text-summary", "lcovonly"],
     "all": true
   }
 }
