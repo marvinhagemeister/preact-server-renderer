@@ -16,10 +16,9 @@
     "lint": "tslint 'src/**/*.ts'",
     "watch": "tsc -w",
     "build": "npm run cleanup && tsc",
-    "test":
-      "mocha --watch-extensions tsx,ts  --compilers ts:ts-node/register 'src/**/__tests__/*.spec.*'",
-    "test-watch": "npm t -- -w -R min",
-    "coverage": "nyc npm t",
+    "test": "jest",
+    "test-watch": "jest --watch",
+    "coverage": "jest --coverage",
     "format": "prettier --trailing-comma=all --write 'src/**/*.{ts,tsx}'",
     "prepublishOnly": "npm run lint && npm t && npm run build",
     "precommit": "lint-staged"
@@ -32,20 +31,16 @@
     "vdom-utils": "^0.3.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.0.4",
-    "@types/mocha": "^2.2.42",
-    "@types/sinon": "^2.3.3",
+    "@types/jest": "^21.1.8",
     "benchmarkjs-pretty": "^2.0.0",
-    "chai": "^4.1.2",
     "husky": "^0.14.3",
+    "jest": "^21.2.1",
     "lint-staged": "^4.0.4",
-    "mocha": "^3.5.0",
-    "nyc": "^11.1.0",
     "preact": "^8.2.5",
     "preact-render-to-string": "^3.6.3",
     "prettier": "^1.6.1",
     "rimraf": "^2.6.1",
-    "sinon": "^3.2.1",
+    "ts-jest": "^21.2.3",
     "ts-node": "^3.3.0",
     "tslint": "^5.7.0",
     "tslint-config-sevenval": "^0.6.3",
@@ -57,19 +52,5 @@
       "npm run lint",
       "git add"
     ]
-  },
-  "nyc": {
-    "include": ["src/*.ts", "src/**/*.ts"],
-    "exclude": [
-      "typings",
-      "node_modules/",
-      "**/__tests__/**",
-      "__tests__/**",
-      "**/*.d.ts"
-    ],
-    "extension": [".ts"],
-    "require": ["ts-node/register"],
-    "reporter": ["json", "html", "text", "text-summary", "lcovonly"],
-    "all": true
   }
 }
