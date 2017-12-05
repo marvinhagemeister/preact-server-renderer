@@ -1,6 +1,6 @@
 {
   "name": "preact-server-renderer",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Server-side renderer for preact",
   "main": "dist/index.js",
   "author": "Marvin Hagemeister <marvin@marvinhagemeister.de>",
