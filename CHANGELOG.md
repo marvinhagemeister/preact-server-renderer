@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 (PREVIEW)
+
+- _experimental_ support for `JSX Fragments`
+
 ## 0.2.1
 
 - minor performance improvement when rendering large amounts of void elements
