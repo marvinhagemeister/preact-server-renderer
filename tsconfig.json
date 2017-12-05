@@ -7,8 +7,7 @@
     "pretty": true,
     "declaration": true,
     "outDir": "dist/",
-    "jsx": "react",
-    "jsxFactory": "h"
+    "jsx": "react"
   },
   "exclude": [
     "node_modules",

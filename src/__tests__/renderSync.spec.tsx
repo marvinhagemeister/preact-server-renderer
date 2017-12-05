@@ -1,4 +1,4 @@
-import { h } from "preact";
+import { React } from "../preview";
 import { createRenderer, Renderer } from "../renderSync";
 import StubRenderer from "./StubRenderer";
 
@@ -44,5 +44,32 @@ describe("renderSync", () => {
     expect(stub.onOpenTag.mock.calls.length).toEqual(0);
     expect(stub.onCloseTag.mock.calls.length).toEqual(0);
     expect(stub.onProp.mock.calls.length).toEqual(0);
+  });
+
+  describe("Fragments", () => {
+    it("should render Fragment", () => {
+      render(
+        <div>
+          <>Foo</>
+        </div>,
+      );
+
+      // Should only be called for div
+      expect(stub.onOpenTag.mock.calls.length).toEqual(1);
+      expect(stub.onCloseTag.mock.calls.length).toEqual(1);
+    });
+
+    it("should render Fragment with keys", () => {
+      const Fragment = React.Fragment;
+      render(
+        <div>
+          <Fragment key="bob">Foo</Fragment>
+        </div>,
+      );
+
+      // Should only be called for div
+      expect(stub.onOpenTag.mock.calls.length).toEqual(1);
+      expect(stub.onCloseTag.mock.calls.length).toEqual(1);
+    });
   });
 });
