@@ -1,4 +1,5 @@
-import { h, VNode } from "preact";
+import { VNode } from "preact";
+import { React } from "../../preview";
 import { createRenderer } from "../../renderSync";
 import JsxRenderer from "../JsxRenderer";
 

@@ -1,4 +1,5 @@
-import { h, Component, VNode } from "preact";
+import { Component, VNode } from "preact";
+import { React } from "../../preview";
 import { createRenderer } from "../../renderSync";
 import CompactRenderer from "../CompactRenderer";
 
