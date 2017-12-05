@@ -75,7 +75,7 @@ export function walkTree<T, R extends Renderer<T>>(
   depth: number,
   options: Options,
 ): void {
-  if (vnode === undefined) {
+  if (vnode === undefined || vnode === null) {
     return;
   }
 

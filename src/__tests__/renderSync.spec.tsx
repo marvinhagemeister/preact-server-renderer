@@ -46,6 +46,14 @@ describe("renderSync", () => {
     expect(stub.onProp.mock.calls.length).toEqual(0);
   });
 
+  it("should skip null nodes", () => {
+    render(null as any);
+
+    expect(stub.onOpenTag.mock.calls.length).toEqual(0);
+    expect(stub.onCloseTag.mock.calls.length).toEqual(0);
+    expect(stub.onProp.mock.calls.length).toEqual(0);
+  });
+
   describe("Fragments", () => {
     it("should render Fragment", () => {
       render(
