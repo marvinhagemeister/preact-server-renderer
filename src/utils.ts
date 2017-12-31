@@ -1,8 +1,4 @@
-import { ComponentConstructor, VNode } from "preact";
-
-export function getComponentName(component: ComponentConstructor<any, any>) {
-  return component.name;
-}
+import { VNode } from "preact";
 
 // Taken from `preact-render-to-string` by @developit
 // See: https://github.com/developit/preact-render-to-string/blob/master/src/util.js#L73
