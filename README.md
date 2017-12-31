@@ -22,22 +22,22 @@ yarn add preact-server-renderer
 
 ```jsx
 const {
-   createRenderer,
-   CompactRenderer,
-   JsxRenderer,
+  createRenderer,
+  CompactRenderer,
+  JsxRenderer,
 } = require("preact-server-renderer");
 
 // Default rendering
 const render = createRenderer(new CompactRenderer());
-const html = render(<div></div>);
+const html = render(<div />);
 
 // JSX rendering
 const renderJsx = createRenderer(new JsxRenderer());
-const html2 = renderJsx(<div></div>);
+const html2 = renderJsx(<div />);
 
 // shallow rendering
-const shallow = createRenderer(new CompactRenderer(), { shallow: true });
-const html3 = shallow(<div></div>);
+const shallow = createRenderer(new CompactRenderer(), { shallow: true });
+const html3 = shallow(<div />);
 ```
 
 ### CompactRenderer
@@ -48,13 +48,16 @@ whitespace and simply renders the components to a string.
 Example:
 
 ```jsx
-const {
-   createRenderer,
-   CompactRenderer,
-} = require("preact-server-renderer");
+const { createRenderer, CompactRenderer } = require("preact-server-renderer");
 
 const render = createRenderer(new CompactRenderer());
-console.log(render(<div class="foo"><h1>Hello</h1></div>));
+console.log(
+  render(
+    <div class="foo">
+      <h1>Hello</h1>
+    </div>,
+  ),
+);
 ```
 
 Output:
@@ -70,13 +73,16 @@ This one is meant for snapshot tests, like they are found in [jest]().
 Example:
 
 ```jsx
-const {
-   createRenderer,
-   JsxRenderer,
-} = require("preact-server-renderer");
+const { createRenderer, JsxRenderer } = require("preact-server-renderer");
 
 const render = createRenderer(new JsxRenderer());
-console.log(render(<div class="foo"><h1>Hello</h1></div>));
+console.log(
+  render(
+    <div class="foo">
+      <h1>Hello</h1>
+    </div>,
+  ),
+);
 ```
 
 Output:
@@ -101,17 +107,17 @@ interface and that's it!
 ```ts
 interface Renderer<T> {
   output: T; // Can be anything you want
-  
+
   /** Reset the current instance */
   reset(): void;
-  
+
   /** Called when an attribute is parsed */
   onProp(
     name: string,
     value: string | boolean | undefined | null,
     depth: number,
   ): void;
-  
+
   /** Called at the start of each new vnode object */
   onOpenTag(
     name: string,
@@ -119,7 +125,7 @@ interface Renderer<T> {
     isVoid: boolean,
     depth: number,
   ): void;
-  
+
   /** Called when attribute parsing is done for the current vnode */
   onOpenTagClose(
     name: string,
@@ -128,21 +134,17 @@ interface Renderer<T> {
     hasChildren: boolean,
     depth: number,
   ): void;
-  
+
   /** Called when the node is a simple string */
   onTextNode(text: string, depth: number): void;
-  
+
   /** Called when all children of the current vnode are parsed */
   onCloseTag(name: string, isVoid: boolean, depth: number): void;
-  
+
   /** Called when vnode has it's own html (f.ex. jQuery plugins) */
   onDangerousInnerHTML(html: string): void;
 }
 ```
-
-## Known Issues
-
-- `Context` ist currently not supported yet
 
 ## License
 
