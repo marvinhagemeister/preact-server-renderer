@@ -292,10 +292,6 @@ describe("CompactRenderer", () => {
       );
     });
 
-    it.skip("should pass context", () => {
-      // TODO
-    });
-
     it.skip("should render high-order components", () => {
       // TODO
     });

@@ -1,6 +1,6 @@
 import { VNode } from "preact";
 import { escape, VOID_ELEMENTS, padStart, jsToCss } from "vdom-utils";
-import { getComponentName, getNodeProps } from "./utils";
+import { getNodeProps } from "./utils";
 import { React } from "./index";
 
 export interface Renderer<T> {
@@ -64,13 +64,14 @@ export const createRenderer = <T, R extends Renderer<T>>(
 
   return (vnode: VNode): T => {
     renderer.reset();
-    walkTree(vnode, renderer, opts.depth as number, opts as Options);
+    walkTree(vnode, {}, renderer, opts.depth as number, opts as Options);
     return renderer.output;
   };
 };
 
 export function walkTree<T, R extends Renderer<T>>(
   vnode: VNode | string | undefined,
+  context: Record<string, any>,
   renderer: R,
   depth: number,
   options: Options,
@@ -98,7 +99,7 @@ export function walkTree<T, R extends Renderer<T>>(
     // Component
     if (typeof nodeName === "function") {
       if (shallow) {
-        nodeName = getComponentName(nodeName);
+        nodeName = nodeName.name;
       } else {
         // Stateless
         let rendered;
@@ -108,17 +109,21 @@ export function walkTree<T, R extends Renderer<T>>(
           !nodeName.prototype ||
           typeof nodeName.prototype.render !== "function"
         ) {
-          rendered = (nodeName as any)(props, undefined);
+          rendered = (nodeName as any)(props, context);
         } else {
           // Class components
-          const c = new nodeName(props, undefined);
+          const c = new nodeName(props, context);
 
-          if ((c as any).componentWillMount !== undefined) {
-            (c as any).componentWillMount();
+          if (c.componentWillMount !== undefined) {
+            c.componentWillMount();
           }
-          rendered = c.render(props, undefined);
+          rendered = c.render(props, c.state, c.context);
+
+          if ((c as any).getChildContext) {
+            context = { ...context, ...(c as any).getChildContext() };
+          }
         }
-        walkTree(rendered, renderer, depth, options);
+        walkTree(rendered, context, renderer, depth, options);
         return;
       }
     }
@@ -128,11 +133,9 @@ export function walkTree<T, R extends Renderer<T>>(
       children = vnode.attributes.children;
     }
 
-    isVoid =
-      VOID_ELEMENTS.has(nodeName as string) ||
-      (shallow && children.length === 0);
+    isVoid = VOID_ELEMENTS.has(nodeName) || (shallow && children.length === 0);
 
-    renderer.onOpenTag(nodeName as string, hasAttributes, isVoid, depth);
+    renderer.onOpenTag(nodeName, hasAttributes, isVoid, depth);
 
     if (hasAttributes) {
       let keys = Object.keys(attributes);
@@ -205,7 +208,7 @@ export function walkTree<T, R extends Renderer<T>>(
     const childrenLen = children.length;
     if (childrenLen > 0) {
       for (var j = 0; j < childrenLen; j++) {
-        walkTree(children[j], renderer, depth + 1, options);
+        walkTree(children[j], context, renderer, depth + 1, options);
       }
     }
   }
