@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+* Add support for [Context](https://reactjs.org/docs/context.html)!
+
 ## 0.2.3
 
 * Fix render error when a vnode is `null`
