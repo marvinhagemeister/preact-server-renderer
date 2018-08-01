@@ -69,6 +69,8 @@ export const createRenderer = <T, R extends Renderer<T>>(
   };
 };
 
+const invalidAttr = /[\s\n\/='"\0<>]/;
+
 export function walkTree<T, R extends Renderer<T>>(
   vnode: VNode | string | undefined,
   context: Record<string, any>,
@@ -146,6 +148,12 @@ export function walkTree<T, R extends Renderer<T>>(
       const keyLen = keys.length;
       for (var i = 0; i < keyLen; i++) {
         let name = keys[i];
+
+        // Prevent XSS
+        if (name.match(invalidAttr)) {
+          continue;
+        }
+
         let value = attributes[name];
 
         if (
