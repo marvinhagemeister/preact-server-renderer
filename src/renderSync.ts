@@ -137,6 +137,11 @@ export function walkTree<T, R extends Renderer<T>>(
 
     isVoid = VOID_ELEMENTS.has(nodeName) || (shallow && children.length === 0);
 
+    // Fix possible XSS in Element name
+    if (invalidAttr.test(nodeName)) {
+      return;
+    }
+
     renderer.onOpenTag(nodeName, hasAttributes, isVoid, depth);
 
     if (hasAttributes) {
