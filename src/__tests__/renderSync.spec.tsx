@@ -1,10 +1,12 @@
-import { Component } from "preact";
+import { Component, h } from "preact";
 import { React } from "../preview";
 import { createRenderer, Renderer } from "../renderSync";
 import StubRenderer from "./StubRenderer";
+import CompactRenderer from "../renderers/CompactRenderer";
 
 const stub = new StubRenderer();
 const render = createRenderer(stub);
+const render2 = createRenderer(new CompactRenderer());
 
 describe("renderSync", () => {
   it("should swap className with class", () => {
@@ -195,5 +197,28 @@ describe("renderSync", () => {
       expect(stub.onOpenTag.mock.calls.length).toEqual(1);
       expect(stub.onCloseTag.mock.calls.length).toEqual(1);
     });
+  });
+
+  it("should omit attributes with invalid names", () => {
+    let rendered = render2(
+      h("div", {
+        "<a": "1",
+        "a>": "1",
+        'foo"bar': "1",
+        '"hello"': "1",
+      }),
+    );
+    expect(rendered).toEqual(`<div></div>`);
+  });
+
+  it("should mitigate attribute name injection", () => {
+    let rendered = render2(
+      h("div", {
+        '></div><script>alert("hi")</script>': "",
+        "foo onclick": "javascript:alert()",
+        a: "b",
+      }),
+    );
+    expect(rendered).toEqual(`<div a="b"></div>`);
   });
 });
