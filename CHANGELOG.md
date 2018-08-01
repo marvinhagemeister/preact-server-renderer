@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1
+
+* Fix possible XSS issue in attribute names and elements. Thanks for @gaearon
+  and the React team for the coordinated fix! CVE-2018-6341
+
 ## 0.3.0
 
 * Add support for [Context](https://reactjs.org/docs/context.html)!
