@@ -221,4 +221,13 @@ describe("renderSync", () => {
     );
     expect(rendered).toEqual(`<div a="b"></div>`);
   });
+
+  it("should mitigate element name injection", () => {
+    let rendered = render2(
+      h('></div><script>alert("hi")</script>', {
+        a: "b",
+      }),
+    );
+    expect(rendered).toEqual("");
+  });
 });
